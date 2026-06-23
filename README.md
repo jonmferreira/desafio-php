@@ -196,13 +196,54 @@ Laravel 13 + PHP 8.4, servido via FrankenPHP.
 - **Concorrência em saídas**: `SaidaController::store` executa dentro de `DB::transaction`
   com `lockForUpdate()` no `LoteItem`, garantindo que saídas simultâneas do mesmo lote não
   gerem saldo negativo de fardos.
-- **Idempotência**: middleware `idempotent` (`EnsureIdempotency`) cacheia respostas POST por
-  usuário/chave/rota, evitando duplicidade em reenvios (`X-Idempotent-Replay: true`).
+- **Idempotência** (`idempotency_keys`): ver seção abaixo.
+- **Trilha de auditoria** (`audits`): ver seção abaixo.
 - **Documentação OpenAPI**: L5-Swagger, disponível em `/api/documentation`. Em produção, o
   middleware `RestrictSwaggerToNonProduction` retorna 404 para essa rota (API9).
 - **Relatórios** (`GET /reports/*`): `capital-clientes` (capital em estoque por cliente),
   `estoque-produtos` (fardos disponíveis por produto/lote), `ruptura` (produtos com fardos
   abaixo de `min_fardos`), `giro` (série temporal de movimentações dos últimos 30 dias).
+
+### Idempotência — `idempotency_keys`
+
+**Problema:** o cliente faz `POST /lotes` e a conexão cai antes de receber a resposta. Ele
+retenta. Sem proteção, dois lotes idênticos são criados.
+
+**Solução:** o cliente envia um UUID no header `Idempotency-Key: <uuid>`. O middleware
+`EnsureIdempotency` verifica a tabela `idempotency_keys` antes de executar a operação:
+
+```mermaid
+flowchart LR
+    C([Cliente]) -->|POST + Idempotency-Key: abc123| MW[Middleware\nEnsureIdempotency]
+    MW -->|chave nova| CT[Controller\nexecuta operação]
+    CT -->|grava resposta| DB[(idempotency_keys\nuser_id · key · route · response)]
+    CT -->|201 Created| C
+    MW -->|chave já existe\nmesma rota + usuário| DB
+    DB -->|resposta cacheada| MW
+    MW -->|201 + X-Idempotent-Replay: true| C
+```
+
+A chave é escopada por `(user_id, key, route)` — o mesmo UUID pode ser reutilizado em rotas
+diferentes sem conflito. O cliente recebe exatamente a mesma resposta do primeiro POST,
+sem que a operação seja executada uma segunda vez.
+
+### Trilha de auditoria — `audits`
+
+**Problema:** saber quem alterou o quê e quando, sem instrumentar cada controller
+individualmente.
+
+**Solução:** a trait `Auditable` é incluída nos models que precisam de rastreabilidade (ex.:
+`Lote`, `Product`). No método `bootAuditable()`, três observers são registrados:
+
+| Evento | O que grava em `audits` |
+|---|---|
+| `created` | `old_values: null` · `new_values: atributos criados` |
+| `updated` | `old_values: valores antes` · `new_values: valores depois` |
+| `deleted` | `old_values: últimos valores` · `new_values: null` |
+
+Cada linha de `audits` também registra `user_id` (quem fez), `ip_address` (de onde) e
+`auditable_type` + `auditable_id` (qual registro foi afetado), formando uma trilha completa
+consultável sem precisar de `git blame` nem logs de banco.
 
 ## Arquitetura — Frontend
 

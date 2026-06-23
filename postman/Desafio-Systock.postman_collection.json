@@ -1,7 +1,7 @@
 {
 	"info": {
 		"name": "Desafio Systock",
-		"description": "Coleção de testes funcionais e de segurança da API do desafio Systock (User CRUD + Product CRUD + movimentações de estoque). Ver postman/README.md para instruções de uso.",
+		"description": "Testes funcionais e de segurança da API Systock — Users, Products, Lotes, Lote Items, Avarias, Saídas e Reports. Ver postman/README.md para instruções de uso.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"auth": {
@@ -35,28 +35,17 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
+						"auth": { "type": "noauth" },
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"email\": \"admin@systock.com.br\",\n  \"password\": \"password\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/login",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"login"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["login"]
 						}
 					}
 				},
@@ -79,28 +68,17 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
+						"auth": { "type": "noauth" },
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"email\": \"naoexiste@systock.com.br\",\n  \"password\": \"senhaerrada\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/login",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"login"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["login"]
 						}
 					}
 				},
@@ -118,19 +96,13 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
+						"auth": { "type": "noauth" },
 						"method": "GET",
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/users",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["users"]
 						}
 					}
 				},
@@ -152,12 +124,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/logout",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"logout"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["logout"]
 						}
 					}
 				},
@@ -177,28 +145,17 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
+						"auth": { "type": "noauth" },
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"email\": \"admin@systock.com.br\",\n  \"password\": \"password\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/login",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"login"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["login"]
 						}
 					}
 				}
@@ -225,12 +182,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/users",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["users"]
 						}
 					}
 				},
@@ -262,24 +215,15 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Operador Teste\",\n  \"cpf\": \"44477700083\",\n  \"email\": \"operador.teste.{{random_suffix}}@systock.com.br\",\n  \"password\": \"senha1234\",\n  \"password_confirmation\": \"senha1234\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/users",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["users"]
 						}
 					}
 				},
@@ -304,24 +248,15 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Atacante\",\n  \"cpf\": \"22255588846\",\n  \"email\": \"atacante@systock.com.br\",\n  \"password\": \"senha1234\",\n  \"password_confirmation\": \"senha1234\",\n  \"role\": \"admin\",\n  \"id\": 999\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/users",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["users"]
 						}
 					}
 				},
@@ -343,13 +278,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/users/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"1"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["users", "1"]
 						}
 					}
 				},
@@ -370,24 +300,15 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"email\": \"operador@systock.com.br\",\n  \"password\": \"password\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/login",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"login"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["login"]
 						}
 					}
 				},
@@ -407,25 +328,14 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/{{other_user_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"{{other_user_id}}"
-							]
-						},
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{operator_token}}",
-									"type": "string"
-								}
-							]
+							"bearer": [{ "key": "token", "value": "{{operator_token}}", "type": "string" }]
+						},
+						"url": {
+							"raw": "{{base_url}}/users/{{other_user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["users", "{{other_user_id}}"]
 						}
 					}
 				},
@@ -444,25 +354,15 @@
 					],
 					"request": {
 						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Operador Teste Atualizado\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/users/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"1"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["users", "1"]
 						}
 					}
 				},
@@ -484,13 +384,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/users/{{disposable_user_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"{{disposable_user_id}}"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["users", "{{disposable_user_id}}"]
 						}
 					}
 				}
@@ -517,12 +412,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/categories",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"categories"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["categories"]
 						}
 					}
 				},
@@ -550,24 +441,15 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"{{random_category_name}}\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/categories",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"categories"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["categories"]
 						}
 					}
 				}
@@ -594,12 +476,36 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/products",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["products"]
+						}
+					}
+				},
+				{
+					"name": "Listar produtos com estoque critico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Retorna array', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(body.data || body).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?status=critico",
+							"host": ["{{base_url}}"],
+							"path": ["products"],
+							"query": [{ "key": "status", "value": "critico" }]
 						}
 					}
 				},
@@ -624,6 +530,8 @@
 									"if (pm.response.code === 201) {",
 									"  const body = pm.response.json();",
 									"  pm.environment.set('created_product_id', body.id);",
+									"  pm.test('Retorna campo peso', () => pm.expect(body.peso).to.exist);",
+									"  pm.test('Retorna campo min_fardos', () => pm.expect(body.min_fardos).to.exist);",
 									"}"
 								]
 							}
@@ -631,24 +539,15 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"category_id\": 1,\n  \"sku\": \"{{random_sku}}\",\n  \"name\": \"Refrigerante 2L\",\n  \"description\": \"Refrigerante cola 2 litros\",\n  \"unit\": \"un\",\n  \"min_quantity\": 10,\n  \"price\": 9.9\n}"
+							"raw": "{\n  \"category_id\": 1,\n  \"sku\": \"{{random_sku}}\",\n  \"name\": \"Refrigerante 2L\",\n  \"description\": \"Refrigerante cola 2 litros\",\n  \"unit\": \"un\",\n  \"peso\": \"1.500\",\n  \"min_fardos\": 5,\n  \"price\": 9.9\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/products",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["products"]
 						}
 					}
 				},
@@ -676,24 +575,15 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"category_id\": 1,\n  \"sku\": \"SKU-0002\",\n  \"name\": \"{{huge_string}}\",\n  \"description\": \"Teste de limite de input\",\n  \"unit\": \"un\",\n  \"min_quantity\": 10\n}"
+							"raw": "{\n  \"category_id\": 1,\n  \"sku\": \"SKU-0002\",\n  \"name\": \"{{huge_string}}\",\n  \"description\": \"Teste de limite de input\",\n  \"unit\": \"un\",\n  \"peso\": \"1.000\",\n  \"min_fardos\": 5\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/products",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["products"]
 						}
 					}
 				},
@@ -715,13 +605,8 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/products/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"1"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["products", "1"]
 						}
 					}
 				},
@@ -740,25 +625,15 @@
 					],
 					"request": {
 						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Refrigerante 2L Atualizado\",\n  \"min_quantity\": 15\n}"
+							"raw": "{\n  \"name\": \"Refrigerante 2L Atualizado\",\n  \"min_fardos\": 15\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/products/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"1"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["products", "1"]
 						}
 					}
 				},
@@ -780,20 +655,582 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/products/{{created_product_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"{{created_product_id}}"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["products", "{{created_product_id}}"]
 						}
 					}
 				}
 			]
 		},
 		{
-			"name": "Movements",
+			"name": "Lotes",
+			"item": [
+				{
+					"name": "Listar lotes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Retorna paginacao com lotes', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(body.data).to.be.an('array');",
+									"  pm.expect(body.data.length).to.be.above(0);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lotes",
+							"host": ["{{base_url}}"],
+							"path": ["lotes"]
+						}
+					}
+				},
+				{
+					"name": "Listar lotes de um cliente especifico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Todos os lotes pertencem ao usuario 2', () => {",
+									"  const body = pm.response.json();",
+									"  (body.data || body).forEach(l => pm.expect(l.user_id).to.equal(2));",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lotes?user_id=2",
+							"host": ["{{base_url}}"],
+							"path": ["lotes"],
+							"query": [{ "key": "user_id", "value": "2" }]
+						}
+					}
+				},
+				{
+					"name": "Criar lote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 201', () => pm.response.to.have.status(201));",
+									"if (pm.response.code === 201) {",
+									"  const body = pm.response.json();",
+									"  pm.environment.set('lote_id', body.id);",
+									"  pm.test('Numero auto-incremental presente', () => pm.expect(body.numero).to.be.above(0));",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": 2,\n  \"frete\": \"35.00\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/lotes",
+							"host": ["{{base_url}}"],
+							"path": ["lotes"]
+						}
+					}
+				},
+				{
+					"name": "Buscar lote por ID (com itens e totais)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Retorna campos de totais calculados', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(body.itens).to.be.an('array');",
+									"  pm.expect(body).to.have.property('total_itens');",
+									"  pm.expect(body).to.have.property('total_avarias');",
+									"  pm.expect(body).to.have.property('total');",
+									"  pm.expect(body).to.have.property('peso_total');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lotes/{{lote_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["lotes", "{{lote_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Volume do lote (peso total)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Retorna peso_total numerico', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(body.peso_total).to.be.a('number');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lotes/{{lote_id}}/volume",
+							"host": ["{{base_url}}"],
+							"path": ["lotes", "{{lote_id}}", "volume"]
+						}
+					}
+				},
+				{
+					"name": "Operador nao consegue excluir lote (Broken Function Level Auth - API5)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 403 - operador nao pode excluir lote', () => pm.response.to.have.status(403));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"auth": {
+							"type": "bearer",
+							"bearer": [{ "key": "token", "value": "{{operator_token}}", "type": "string" }]
+						},
+						"url": {
+							"raw": "{{base_url}}/lotes/1",
+							"host": ["{{base_url}}"],
+							"path": ["lotes", "1"]
+						}
+					}
+				},
+				{
+					"name": "Excluir lote (cleanup)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200/204', () => pm.expect([200, 204]).to.include(pm.response.code));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lotes/{{lote_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["lotes", "{{lote_id}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Lote Items",
+			"item": [
+				{
+					"name": "Adicionar item ao lote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 201', () => pm.response.to.have.status(201));",
+									"pm.test('Subtotal calculado corretamente (10 fardos x 12 itens x 25.90 = 3108)', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(parseFloat(body.subtotal)).to.equal(3108);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"product_id\": 1,\n  \"quantidade_fardos\": 10,\n  \"itens_por_fardo\": 12,\n  \"valor_unitario\": \"25.90\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/lotes/{{lote_id}}/items",
+							"host": ["{{base_url}}"],
+							"path": ["lotes", "{{lote_id}}", "items"]
+						}
+					}
+				},
+				{
+					"name": "Atualizar item do lote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('quantidade_fardos atualizada para 8', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(body.quantidade_fardos).to.equal(8);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"quantidade_fardos\": 8\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/lotes/{{lote_id}}/items/1",
+							"host": ["{{base_url}}"],
+							"path": ["lotes", "{{lote_id}}", "items", "1"]
+						}
+					}
+				},
+				{
+					"name": "Remover item do lote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200/204', () => pm.expect([200, 204]).to.include(pm.response.code));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lotes/{{lote_id}}/items/1",
+							"host": ["{{base_url}}"],
+							"path": ["lotes", "{{lote_id}}", "items", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Avarias",
+			"item": [
+				{
+					"name": "Adicionar avaria ao lote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 201', () => pm.response.to.have.status(201));",
+									"if (pm.response.code === 201) {",
+									"  const body = pm.response.json();",
+									"  pm.environment.set('avaria_id', body.id);",
+									"  pm.test('Retorna descricao e valor', () => {",
+									"    pm.expect(body.descricao).to.be.a('string');",
+									"    pm.expect(body.valor).to.exist;",
+									"  });",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"descricao\": \"Caixas amassadas no transporte\",\n  \"valor\": \"45.00\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/lotes/1/avarias",
+							"host": ["{{base_url}}"],
+							"path": ["lotes", "1", "avarias"]
+						}
+					}
+				},
+				{
+					"name": "Remover avaria",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200/204', () => pm.expect([200, 204]).to.include(pm.response.code));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lotes/1/avarias/{{avaria_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["lotes", "1", "avarias", "{{avaria_id}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Saidas",
+			"item": [
+				{
+					"name": "Registrar saida de fardos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 201', () => pm.response.to.have.status(201));",
+									"pm.test('Retorna dados da saida registrada', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(body.lote_id).to.exist;",
+									"  pm.expect(body.product_id).to.exist;",
+									"  pm.expect(body.quantidade_fardos).to.equal(2);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"lote_id\": 1,\n  \"product_id\": 1,\n  \"quantidade_fardos\": 2,\n  \"motivo\": \"Venda balcao\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/saidas",
+							"host": ["{{base_url}}"],
+							"path": ["saidas"]
+						}
+					}
+				},
+				{
+					"name": "Saida maior que fardos disponiveis no lote - regra de negocio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 422 - fardos insuficientes no lote', () => pm.response.to.have.status(422));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"lote_id\": 1,\n  \"product_id\": 1,\n  \"quantidade_fardos\": 999999,\n  \"motivo\": \"Tentativa de saida maior que o estoque do lote\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/saidas",
+							"host": ["{{base_url}}"],
+							"path": ["saidas"]
+						}
+					}
+				},
+				{
+					"name": "Race Condition - saida concorrente do mesmo lote (API6)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Rodar via Collection Runner com 10 iteracoes e 0ms de delay.",
+									"// O somatorio de saidas bem-sucedidas nao pode ultrapassar o quantidade_fardos",
+									"// disponivel no lote. O lockForUpdate() no SaidaController garante que",
+									"// cada requisicao que exceder o saldo retorne 422, sem 500 nem saldo negativo.",
+									"pm.test('Status 201 ou 422 (sem 500)', () => pm.expect([201, 422]).to.include(pm.response.code));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"lote_id\": 1,\n  \"product_id\": 1,\n  \"quantidade_fardos\": 1,\n  \"motivo\": \"Teste de race condition - disparar em paralelo\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/saidas",
+							"host": ["{{base_url}}"],
+							"path": ["saidas"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "Capital em estoque por cliente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Retorna array com user_name e capital_total', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(body).to.be.an('array');",
+									"  if (body.length > 0) {",
+									"    pm.expect(body[0]).to.have.property('user_name');",
+									"    pm.expect(body[0]).to.have.property('capital_total');",
+									"  }",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/capital-clientes",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "capital-clientes"]
+						}
+					}
+				},
+				{
+					"name": "Estoque por produto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Retorna array com dados de produto e lote', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(body).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/estoque-produtos",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "estoque-produtos"]
+						}
+					}
+				},
+				{
+					"name": "Produtos com estoque critico (ruptura)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Retorna array (pode estar vazio se estoque ok)', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(body).to.be.an('array');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/ruptura",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "ruptura"]
+						}
+					}
+				},
+				{
+					"name": "Giro de estoque (serie temporal 30 dias)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Retorna dados de giro', () => {",
+									"  const body = pm.response.json();",
+									"  pm.expect(body).to.be.an('array').or.be.an('object');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/giro",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "giro"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Movements (Giro / Idempotencia)",
 			"item": [
 				{
 					"name": "Listar movimentacoes do produto",
@@ -813,19 +1250,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{base_url}}/products/1/movements",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"movements"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["products", "1", "movements"]
 						}
 					}
 				},
 				{
-					"name": "Registrar entrada de estoque",
+					"name": "Registrar entrada (giro)",
 					"event": [
 						{
 							"listen": "test",
@@ -840,113 +1271,17 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Idempotency-Key",
-								"value": "{{$guid}}"
-							}
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Idempotency-Key", "value": "{{$guid}}" }
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"type\": \"in\",\n  \"quantity\": 50,\n  \"reason\": \"Entrada de estoque inicial\"\n}"
+							"raw": "{\n  \"type\": \"in\",\n  \"quantity\": 50,\n  \"reason\": \"Entrada para giro de estoque\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/products/1/movements",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"movements"
-							]
-						}
-					}
-				},
-				{
-					"name": "Registrar saida de estoque",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"pm.test('Status 201', () => pm.response.to.have.status(201));"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Idempotency-Key",
-								"value": "{{$guid}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"type\": \"out\",\n  \"quantity\": 5,\n  \"reason\": \"Venda balcao\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/products/1/movements",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"movements"
-							]
-						}
-					}
-				},
-				{
-					"name": "Saida maior que estoque disponivel - regra de negocio",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"pm.test('Status 422', () => pm.response.to.have.status(422));"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Idempotency-Key",
-								"value": "{{$guid}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"type\": \"out\",\n  \"quantity\": 999999,\n  \"reason\": \"Tentativa de saida maior que o estoque\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/products/1/movements",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"movements"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["products", "1", "movements"]
 						}
 					}
 				},
@@ -980,14 +1315,8 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Idempotency-Key",
-								"value": "{{fixed_idempotency_key}}"
-							}
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Idempotency-Key", "value": "{{fixed_idempotency_key}}" }
 						],
 						"body": {
 							"mode": "raw",
@@ -995,14 +1324,8 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/products/1/movements",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"movements"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["products", "1", "movements"]
 						}
 					}
 				},
@@ -1036,14 +1359,8 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Idempotency-Key",
-								"value": "{{fixed_idempotency_key}}"
-							}
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Idempotency-Key", "value": "{{fixed_idempotency_key}}" }
 						],
 						"body": {
 							"mode": "raw",
@@ -1051,59 +1368,8 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/products/1/movements",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"movements"
-							]
-						}
-					}
-				},
-				{
-					"name": "Race Condition - saida concorrente do mesmo lote (API6)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"// Rodar este request via Collection Runner com 5+ iteracoes e 0ms de delay,",
-									"// ou usando o Postman Runner 'Run collection' marcando varias execucoes simultaneas.",
-									"// O somatorio de saidas bem-sucedidas nao pode ultrapassar o quantity_rem inicial do lote.",
-									"pm.test('Status 201 ou 422 (sem 500)', () => pm.expect([201, 422]).to.include(pm.response.code));"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Idempotency-Key",
-								"value": "{{$guid}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"type\": \"out\",\n  \"quantity\": 1,\n  \"reason\": \"Teste de race condition - disparar em paralelo\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/products/1/movements",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"1",
-								"movements"
-							]
+							"host": ["{{base_url}}"],
+							"path": ["products", "1", "movements"]
 						}
 					}
 				}
@@ -1111,13 +1377,13 @@
 		}
 	],
 	"variable": [
-		{
-			"key": "huge_string",
-			"value": ""
-		},
-		{
-			"key": "fixed_idempotency_key",
-			"value": ""
-		}
+		{ "key": "huge_string", "value": "" },
+		{ "key": "fixed_idempotency_key", "value": "" },
+		{ "key": "random_suffix", "value": "" },
+		{ "key": "random_category_name", "value": "" },
+		{ "key": "random_sku", "value": "" },
+		{ "key": "operator_token", "value": "" },
+		{ "key": "lote_id", "value": "" },
+		{ "key": "avaria_id", "value": "" }
 	]
 }

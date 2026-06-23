@@ -25,7 +25,8 @@ class UpdateProductRequest extends FormRequest
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'unit' => ['sometimes', 'required', 'string', 'max:10'],
-            'min_quantity' => ['sometimes', 'required', 'integer', 'min:0', 'max:1000000'],
+            'peso' => ['sometimes', 'required', 'numeric', 'min:0', 'max:99999.999'],
+            'min_fardos' => ['sometimes', 'required', 'integer', 'min:0', 'max:1000000'],
             'price' => ['sometimes', 'required', 'numeric', 'min:0', 'max:999999999.99'],
         ];
     }

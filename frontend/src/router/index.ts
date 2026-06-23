@@ -68,6 +68,28 @@ const router = createRouter({
       props: true,
       meta: { adminOnly: true },
     },
+    {
+      path: '/lotes',
+      name: 'lotes',
+      component: () => import('@/views/LotesView/LotesView.vue'),
+    },
+    {
+      path: '/lotes/new',
+      name: 'lotes.new',
+      component: () => import('@/views/LotesView/LoteFormView/LoteFormView.vue'),
+    },
+    {
+      path: '/lotes/:id',
+      name: 'lotes.show',
+      component: () => import('@/views/LotesView/LoteDetailView/LoteDetailView.vue'),
+      props: true,
+    },
+    {
+      path: '/lotes/:id/saida',
+      name: 'lotes.saida',
+      component: () => import('@/views/LotesView/SaidaFormView/SaidaFormView.vue'),
+      props: true,
+    },
   ],
 })
 

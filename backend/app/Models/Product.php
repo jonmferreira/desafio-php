@@ -8,19 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['category_id', 'sku', 'name', 'description', 'unit', 'min_quantity', 'price'])]
+#[Fillable(['category_id', 'sku', 'name', 'description', 'unit', 'peso', 'min_fardos', 'price'])]
 class Product extends Model
 {
     use HasFactory;
 
-    /** @var list<string> */
-    protected $appends = ['quantity'];
-
     protected function casts(): array
     {
         return [
-            'min_quantity' => 'integer',
-            'price' => 'decimal:2',
+            'peso'       => 'decimal:3',
+            'min_fardos' => 'integer',
+            'price'      => 'decimal:2',
         ];
     }
 
@@ -41,12 +39,10 @@ class Product extends Model
     }
 
     /**
-     * Saldo atual em estoque: soma de entradas menos soma de saidas.
+     * @return HasMany<LoteItem, $this>
      */
-    public function getQuantityAttribute(): int
+    public function loteItems(): HasMany
     {
-        return (int) $this->stockMovements()
-            ->selectRaw("COALESCE(SUM(CASE WHEN type = 'in' THEN quantity ELSE -quantity END), 0) as balance")
-            ->value('balance');
+        return $this->hasMany(LoteItem::class);
     }
 }

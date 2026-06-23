@@ -1,9 +1,7 @@
-import type { MovementPayload } from './integrations/types'
 import type { Category, Product, StockFlowEntry } from '@/types'
 import { defineStore } from 'pinia'
 import { type DataTableOptions, toPaginationParams } from '@/helpers/pagination'
 import {
-  createMovement,
   deleteProduct,
   exportProducts,
   fetchCategories,
@@ -13,7 +11,7 @@ import {
 
 export interface ProductFilters {
   categoryId: number | null
-  status: 'ruptura' | 'ok' | null
+  status: 'critico' | 'ok' | null
   priceMin: number | null
   priceMax: number | null
 }
@@ -99,12 +97,6 @@ export const useProductsViewStore = defineStore('productsView', {
     async remove (id: number) {
       await deleteProduct(id)
       await this.fetchAll({ page: this.pagination.page, itemsPerPage: this.pagination.perPage })
-    },
-
-    async registerMovement (productId: number, payload: MovementPayload) {
-      await createMovement(productId, payload)
-      await this.fetchAll({ page: this.pagination.page, itemsPerPage: this.pagination.perPage })
-      await this.loadStockFlow()
     },
 
     async exportCsv () {

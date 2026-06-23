@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.describe('Produtos — Admin', () => {
   test.use({ storageState: 'e2e/.auth/admin.json' })

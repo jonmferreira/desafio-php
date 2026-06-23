@@ -1,40 +1,42 @@
--- 1. Produtos em ruptura de estoque (saldo atual abaixo do mínimo)
---    Retorna SKU, nome, saldo calculado e quantidade mínima configurada.
-SELECT
-    p.sku,
-    p.name,
-    p.min_quantity,
-    COALESCE(SUM(CASE WHEN sm.type = 'in' THEN sm.quantity ELSE -sm.quantity END), 0) AS saldo_atual
-FROM products p
-LEFT JOIN stock_movements sm ON sm.product_id = p.id
-GROUP BY p.id, p.sku, p.name, p.min_quantity
-HAVING saldo_atual < p.min_quantity
-ORDER BY saldo_atual ASC;
-
--- 2. Movimentações dos últimos 30 dias agrupadas por dia
---    Usado para alimentar o gráfico de giro de estoque no dashboard.
-SELECT
-    DATE(created_at)           AS data,
-    SUM(quantity)              AS total_movimentado,
-    COUNT(*)                   AS total_operacoes,
-    SUM(CASE WHEN type = 'in'  THEN quantity ELSE 0 END) AS total_entradas,
-    SUM(CASE WHEN type = 'out' THEN quantity ELSE 0 END) AS total_saidas
-FROM stock_movements
-WHERE created_at >= NOW() - INTERVAL '30 days'
-GROUP BY DATE(created_at)
-ORDER BY data;
-
--- 3. Top 10 usuários com mais movimentações no sistema
---    Útil para auditoria e rastreabilidade de operações por operador.
+-- 1. Capital em estoque por cliente (user)
+--    Soma do valor (valor_unitario × itens_por_fardo × quantidade_fardos) de todos os
+--    lote_items dos lotes pertencentes a cada usuário.
 SELECT
     u.id,
     u.name,
     u.email,
-    u.role,
-    COUNT(sm.id)               AS total_movimentacoes,
-    SUM(sm.quantity)           AS total_itens_movimentados
+    COALESCE(SUM(li.valor_unitario * li.itens_por_fardo * li.quantidade_fardos), 0) AS capital_em_estoque
 FROM users u
-LEFT JOIN stock_movements sm ON sm.user_id = u.id
-GROUP BY u.id, u.name, u.email, u.role
-ORDER BY total_movimentacoes DESC
-LIMIT 10;
+LEFT JOIN lotes l ON l.user_id = u.id
+LEFT JOIN lote_items li ON li.lote_id = l.id
+GROUP BY u.id, u.name, u.email
+ORDER BY capital_em_estoque DESC;
+
+-- 2. Produtos com estoque crítico (total de fardos abaixo do mínimo)
+--    Considera todos os lote_items de todos os lotes, independente do cliente.
+SELECT
+    p.sku,
+    p.name,
+    p.min_fardos,
+    COALESCE(SUM(li.quantidade_fardos), 0) AS total_fardos_em_estoque
+FROM products p
+LEFT JOIN lote_items li ON li.product_id = p.id
+GROUP BY p.id, p.sku, p.name, p.min_fardos
+HAVING COALESCE(SUM(li.quantidade_fardos), 0) < p.min_fardos
+ORDER BY total_fardos_em_estoque ASC;
+
+-- 3. Maior estoque de cada produto por cliente
+--    Para cada (usuário, produto), soma os fardos em todos os lotes daquele usuário.
+SELECT
+    u.id   AS user_id,
+    u.name AS cliente,
+    p.id   AS product_id,
+    p.sku,
+    p.name AS produto,
+    COALESCE(SUM(li.quantidade_fardos), 0) AS total_fardos
+FROM users u
+JOIN lotes l ON l.user_id = u.id
+JOIN lote_items li ON li.lote_id = l.id
+JOIN products p ON p.id = li.product_id
+GROUP BY u.id, u.name, p.id, p.sku, p.name
+ORDER BY u.id, total_fardos DESC;

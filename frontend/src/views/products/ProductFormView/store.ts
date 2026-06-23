@@ -19,7 +19,8 @@ function emptyForm (): ProductForm {
     name: '',
     description: '',
     unit: '',
-    min_quantity: 0,
+    peso: 0,
+    min_fardos: 0,
     price: 0,
   }
 }
@@ -63,7 +64,8 @@ export const useProductFormStore = defineStore('productForm', {
           name: product.name,
           description: product.description ?? '',
           unit: product.unit,
-          min_quantity: product.min_quantity,
+          peso: Number(product.peso),
+          min_fardos: product.min_fardos,
           price: Number(product.price),
         }
       } catch {
@@ -83,7 +85,8 @@ export const useProductFormStore = defineStore('productForm', {
         name: this.form.name,
         description: this.form.description || null,
         unit: this.form.unit,
-        min_quantity: this.form.min_quantity,
+        peso: this.form.peso,
+        min_fardos: this.form.min_fardos,
         price: this.form.price,
       }
 

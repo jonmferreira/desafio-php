@@ -18,7 +18,7 @@
               </p>
 
               <p class="text-body-2 text-medium-emphasis mt-1 mb-0">
-                {{ rupturaCount === 1 ? 'produto em ruptura' : 'produtos em ruptura' }}
+                {{ rupturaCount === 1 ? 'produto com estoque crítico' : 'produtos com estoque crítico' }}
               </p>
             </div>
 

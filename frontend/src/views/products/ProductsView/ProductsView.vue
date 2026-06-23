@@ -137,20 +137,16 @@
       :total="pagination.total"
       @delete="confirmDelete"
       @edit="edit"
-      @movement="openMovementForm"
       @update:options="fetchAll"
     />
 
     <confirm-dialog ref="confirmDialog" />
-    <movement-form ref="movementForm" :error="movementError" :loading="movementLoading" @submit="submitMovement" />
   </div>
 </template>
 
 <script lang="ts">
-  import type { MovementFormData } from '@/components/products/MovementForm/types'
   import type { Product } from '@/types'
   import { mapActions, mapState, mapWritableState } from 'pinia'
-  import MovementForm from '@/components/products/MovementForm/MovementForm.vue'
   import ConfirmDialog from '@/components/shared/ConfirmDialog/ConfirmDialog.vue'
   import { useAuthStore } from '@/stores/auth'
   import { useNotificationsStore } from '@/stores/notifications'
@@ -160,15 +156,12 @@
   export default {
     name: 'ProductsView',
 
-    components: { ProductTable, ConfirmDialog, MovementForm },
+    components: { ProductTable, ConfirmDialog },
 
     data () {
       return {
-        movementProduct: null as Product | null,
-        movementLoading: false,
-        movementError: null as string | null,
         statusItems: [
-          { label: 'Ruptura', value: 'ruptura' },
+          { label: 'Estoque crítico', value: 'critico' },
           { label: 'OK', value: 'ok' },
         ],
       }
@@ -200,7 +193,7 @@
 
     methods: {
       ...mapActions(useProductsViewStore, [
-        'fetchAll', 'remove', 'registerMovement',
+        'fetchAll', 'remove',
         'loadCategories', 'loadStockFlow', 'exportCsv', 'applyFilters',
       ]),
       ...mapActions(useNotificationsStore, ['notify']),
@@ -228,31 +221,6 @@
           this.notify('Produto excluído com sucesso.')
         } catch {
           this.notify('Não foi possível excluir o produto.', 'error')
-        }
-      },
-
-      openMovementForm (product: Product) {
-        this.movementProduct = product
-        this.movementError = null
-        ;(this.$refs.movementForm as InstanceType<typeof MovementForm>).open(product.name)
-      },
-
-      async submitMovement (data: MovementFormData) {
-        if (!this.movementProduct) return
-
-        this.movementLoading = true
-        this.movementError = null
-
-        try {
-          await this.registerMovement(this.movementProduct.id, data)
-          ;(this.$refs.movementForm as InstanceType<typeof MovementForm>).close()
-          this.notify('Movimentação registrada com sucesso.')
-        } catch (error: any) {
-          this.movementError = error.response?.data?.errors?.quantity?.[0]
-            ?? error.response?.data?.message
-            ?? 'Não foi possível registrar a movimentação.'
-        } finally {
-          this.movementLoading = false
         }
       },
     },

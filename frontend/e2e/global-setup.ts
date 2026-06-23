@@ -1,5 +1,5 @@
+import { mkdir } from 'node:fs/promises'
 import { chromium, type FullConfig } from '@playwright/test'
-import { mkdir } from 'fs/promises'
 import { ADMIN, OPERATOR } from './helpers/auth'
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000'
@@ -18,6 +18,8 @@ async function saveState (email: string, password: string, path: string) {
   // Pré-aquece todas as rotas para que Vite conclua a otimização
   // de dependências antes dos testes (evita reloads que cancelam navegações)
   await page.goto(`${BASE_URL}/products`)
+  await page.waitForLoadState('networkidle')
+  await page.goto(`${BASE_URL}/lotes`)
   await page.waitForLoadState('networkidle')
   await page.goto(`${BASE_URL}/reports`)
   await page.waitForLoadState('networkidle')

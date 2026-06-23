@@ -13,8 +13,8 @@
       {{ item.category?.name }}
     </template>
 
-    <template #item.quantity="{ item }">
-      <stock-badge :min-quantity="item.min_quantity" :quantity="item.quantity" :unit="item.unit" />
+    <template #item.peso="{ item }">
+      {{ Number(item.peso).toFixed(3) }} kg
     </template>
 
     <template #item.price="{ item }">
@@ -22,14 +22,6 @@
     </template>
 
     <template #item.actions="{ item }">
-      <v-btn
-        icon="mdi-swap-vertical"
-        size="small"
-        title="Registrar movimentação"
-        variant="text"
-        @click="$emit('movement', item)"
-      />
-
       <template v-if="isAdmin">
         <v-btn
           icon="mdi-pencil"
@@ -52,12 +44,9 @@
 
 <script lang="ts">
   import type { AuthUser, Product } from '@/types'
-  import StockBadge from '@/components/products/StockBadge/StockBadge.vue'
 
   export default {
     name: 'ProductTable',
-
-    components: { StockBadge },
 
     props: {
       items: { type: Array as () => Product[], required: true },
@@ -68,7 +57,7 @@
       currentUser: { type: Object as () => AuthUser | null, default: null },
     },
 
-    emits: ['edit', 'delete', 'movement', 'update:options'],
+    emits: ['edit', 'delete', 'update:options'],
 
     data () {
       return {
@@ -76,7 +65,8 @@
           { title: 'SKU', key: 'sku' },
           { title: 'Nome', key: 'name' },
           { title: 'Categoria', key: 'category', sortable: false },
-          { title: 'Estoque', key: 'quantity', sortable: false },
+          { title: 'Peso unit.', key: 'peso', sortable: false },
+          { title: 'Fardos mín.', key: 'min_fardos' },
           { title: 'Preço', key: 'price' },
           { title: 'Ações', key: 'actions', sortable: false },
         ],

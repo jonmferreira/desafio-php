@@ -13,7 +13,7 @@
           size="small"
           @click="$router.push({ name: 'reports', query: { tab: 'ruptura' } })"
         >
-          {{ rupturaCount }} ruptura{{ rupturaCount !== 1 ? 's' : '' }}
+          {{ rupturaCount }} estoque{{ rupturaCount !== 1 ? 's' : '' }} crítico{{ rupturaCount !== 1 ? 's' : '' }}
         </v-chip>
 
         <span class="mr-4 text-body-2">{{ user?.name }}</span>
@@ -32,6 +32,12 @@
             prepend-icon="mdi-package-variant"
             title="Produtos"
             to="/products"
+          />
+
+          <v-list-item
+            prepend-icon="mdi-package-variant-closed"
+            title="Lotes"
+            to="/lotes"
           />
 
           <v-list-item

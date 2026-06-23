@@ -17,16 +17,16 @@ class ProductController extends Controller
         // Limite de per_page protege contra Unrestricted Resource Consumption (API4).
         $perPage = min((int) $request->query('per_page', 15), 100);
 
-        $balanceSql = "(SELECT COALESCE(SUM(CASE WHEN type = 'in' THEN quantity ELSE -quantity END), 0)"
-            .' FROM stock_movements WHERE stock_movements.product_id = products.id)';
+        $fardosSql = '(SELECT COALESCE(SUM(li.quantidade_fardos), 0)'
+            .' FROM lote_items li WHERE li.product_id = products.id)';
 
         $query = Product::query()
             ->with('category')
             ->when($request->query('category_id'), fn ($q, $v) => $q->where('category_id', $v))
             ->when($request->query('price_min'), fn ($q, $v) => $q->where('price', '>=', $v))
             ->when($request->query('price_max'), fn ($q, $v) => $q->where('price', '<=', $v))
-            ->when($request->query('status') === 'ruptura', fn ($q) => $q->whereRaw("$balanceSql < products.min_quantity"))
-            ->when($request->query('status') === 'ok', fn ($q) => $q->whereRaw("$balanceSql >= products.min_quantity"));
+            ->when($request->query('status') === 'critico', fn ($q) => $q->whereRaw("$fardosSql < products.min_fardos"))
+            ->when($request->query('status') === 'ok', fn ($q) => $q->whereRaw("$fardosSql >= products.min_fardos"));
 
         return response()->json($query->paginate($perPage));
     }
@@ -64,17 +64,19 @@ class ProductController extends Controller
         $escape = fn (mixed $v) => '"' . str_replace('"', '""', (string) $v) . '"';
 
         $lines = [
-            implode(';', array_map($escape, ['SKU', 'Nome', 'Categoria', 'Unidade', 'Estoque Mínimo', 'Estoque Atual', 'Preço'])),
+            implode(';', array_map($escape, ['SKU', 'Nome', 'Categoria', 'Unidade', 'Peso (kg)', 'Fardos Mínimos', 'Fardos em Estoque', 'Preço'])),
         ];
 
         foreach ($products as $product) {
+            $fardos = $product->loteItems()->sum('quantidade_fardos');
             $lines[] = implode(';', array_map($escape, [
                 $product->sku,
                 $product->name,
                 $product->category?->name ?? '',
                 $product->unit,
-                $product->min_quantity,
-                $product->quantity,
+                number_format((float) $product->peso, 3, ',', '.'),
+                $product->min_fardos,
+                $fardos,
                 number_format((float) $product->price, 2, ',', '.'),
             ]));
         }

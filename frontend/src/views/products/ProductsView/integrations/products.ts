@@ -1,7 +1,5 @@
 import type {
   CategoryListResponse,
-  MovementPayload,
-  MovementResponse,
   ProductListParams,
   ProductListResponse,
 } from './types'
@@ -23,17 +21,6 @@ export function fetchCategories () {
 export function deleteProduct (id: number) {
   return api
     .request<void>({ method: 'DELETE', url: `/products/${id}` })
-    .then(response => response.data)
-}
-
-export function createMovement (productId: number, payload: MovementPayload) {
-  return api
-    .request<MovementResponse>({
-      method: 'POST',
-      url: `/products/${productId}/movements`,
-      data: payload,
-      headers: { 'Idempotency-Key': crypto.randomUUID() },
-    })
     .then(response => response.data)
 }
 

@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test'
-import { login, ADMIN } from './helpers/auth'
+import { expect, test } from '@playwright/test'
+import { ADMIN, login } from './helpers/auth'
 
 test.describe('Login direto', () => {
   test('credenciais válidas redirecionam para dashboard', async ({ page }) => {

@@ -29,8 +29,17 @@
           <v-text-field v-model="form.unit" label="Unidade" maxlength="10" required />
 
           <v-text-field
-            v-model.number="form.min_quantity"
-            label="Estoque mínimo"
+            v-model.number="form.peso"
+            label="Peso unitário (kg)"
+            min="0"
+            required
+            step="0.001"
+            type="number"
+          />
+
+          <v-text-field
+            v-model.number="form.min_fardos"
+            label="Fardos mínimos em estoque"
             min="0"
             required
             type="number"

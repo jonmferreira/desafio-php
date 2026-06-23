@@ -32,9 +32,9 @@ export interface Product {
   name: string
   description: string | null
   unit: string
-  min_quantity: number
+  peso: string
+  min_fardos: number
   price: string
-  quantity: number
   created_at: string
   updated_at: string
 }
@@ -61,10 +61,80 @@ export interface RupturaItem {
   id: number
   sku: string
   name: string
-  min_quantity: number
+  min_fardos: number
   unit: string
   category: string
-  balance: number
+  total_fardos: number
+}
+
+export interface Lote {
+  id: number
+  user_id: number
+  numero: number
+  frete: string
+  user?: { id: number, name: string }
+  itens?: LoteItem[]
+  avarias?: Avaria[]
+  saidas?: Saida[]
+  created_at: string
+  updated_at: string
+}
+
+export interface LoteItem {
+  lote_id: number
+  product_id: number
+  quantidade_fardos: number
+  itens_por_fardo: number
+  valor_unitario: string
+  product?: { id: number, sku: string, name: string, unit: string, peso: string }
+  created_at: string
+  updated_at: string
+}
+
+export interface Avaria {
+  id: number
+  lote_id: number
+  descricao: string
+  valor: string
+  created_at: string
+  updated_at: string
+}
+
+export interface Saida {
+  id: number
+  lote_id: number
+  product_id: number
+  user_id: number
+  quantidade_fardos: number
+  motivo: string | null
+  product?: { id: number, sku: string, name: string }
+  user?: { id: number, name: string }
+  lote?: { id: number, numero: number, user_id: number }
+  created_at: string
+  updated_at: string
+}
+
+export interface LoteDetalhe {
+  lote: Lote
+  total_itens: number
+  total_avarias: number
+  total: number
+  peso_total: number
+}
+
+export interface CapitalCliente {
+  id: number
+  name: string
+  capital: number
+}
+
+export interface EstoqueProduto {
+  id: number
+  sku: string
+  name: string
+  unit: string
+  min_fardos: number
+  total_fardos: number
 }
 
 export interface ValorEstoqueItem {

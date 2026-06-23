@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test'
-import { login, ADMIN, OPERATOR } from './helpers/auth'
+import { expect, test } from '@playwright/test'
+import { ADMIN, login, OPERATOR } from './helpers/auth'
 
 // ─── 1. XSS stored ───────────────────────────────────────────────────────────
 test.describe('Segurança — XSS stored', () => {
@@ -21,11 +21,7 @@ test.describe('Segurança — XSS stored', () => {
         unit: 'un',
         category: { id: 1, name: 'Teste' },
       }
-      if (json.data) {
-        json.data = [fakeItem, ...json.data]
-      } else {
-        json.data = [fakeItem]
-      }
+      json.data = json.data ? [fakeItem, ...json.data] : [fakeItem]
       await route.fulfill({ json })
     })
 
@@ -66,7 +62,9 @@ test.describe('Segurança — escalada de role via localStorage', () => {
       const authRaw = localStorage.getItem('auth')
       if (authRaw) {
         const state = JSON.parse(authRaw)
-        if (state.user) state.user.role = 'admin'
+        if (state.user) {
+          state.user.role = 'admin'
+        }
         localStorage.setItem('auth', JSON.stringify(state))
       } else {
         const userRaw = localStorage.getItem('user')

@@ -22,7 +22,8 @@ class StoreProductRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'unit' => ['required', 'string', 'max:10'],
-            'min_quantity' => ['required', 'integer', 'min:0', 'max:1000000'],
+            'peso' => ['required', 'numeric', 'min:0', 'max:99999.999'],
+            'min_fardos' => ['required', 'integer', 'min:0', 'max:1000000'],
             'price' => ['required', 'numeric', 'min:0', 'max:999999999.99'],
         ];
     }

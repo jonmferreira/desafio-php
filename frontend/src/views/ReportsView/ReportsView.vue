@@ -6,7 +6,13 @@
 
     <v-tabs v-model="activeTab" color="primary">
       <v-tab value="ruptura">
-        <v-badge v-if="ruptura.length > 0" color="error" :content="ruptura.length" inline class="ma-1">
+        <v-badge
+          v-if="ruptura.length > 0"
+          class="ma-1"
+          color="error"
+          :content="ruptura.length"
+          inline
+        >
           Estoque crítico
         </v-badge>
 
@@ -32,14 +38,14 @@
           :loading="loading"
           no-data-text="Nenhum produto em ruptura."
         >
-          <template #item.balance="{ item }">
+          <template #item.total_fardos="{ item }">
             <span class="text-error font-weight-medium">
-              {{ item.balance }} {{ item.unit }}
+              {{ item.total_fardos }} fardos
             </span>
           </template>
 
-          <template #item.min_quantity="{ item }">
-            {{ item.min_quantity }} {{ item.unit }}
+          <template #item.min_fardos="{ item }">
+            {{ item.min_fardos }} fardos
           </template>
         </v-data-table>
       </v-window-item>
@@ -101,8 +107,8 @@
           { title: 'SKU', key: 'sku' },
           { title: 'Produto', key: 'name' },
           { title: 'Categoria', key: 'category', sortable: false },
-          { title: 'Saldo atual', key: 'balance' },
-          { title: 'Estoque mínimo', key: 'min_quantity' },
+          { title: 'Fardos em estoque', key: 'total_fardos' },
+          { title: 'Mínimo de fardos', key: 'min_fardos' },
         ],
         valorHeaders: [
           { title: 'Categoria', key: 'category' },

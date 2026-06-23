@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             StockMovementSeeder::class,
             DemoMovementsSeeder::class,
+            LoteSeeder::class,
         ]);
     }
 }

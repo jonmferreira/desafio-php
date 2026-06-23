@@ -4,6 +4,7 @@ export interface ProductForm {
   name: string
   description: string
   unit: string
-  min_quantity: number
+  peso: number
+  min_fardos: number
   price: number
 }

@@ -11,6 +11,7 @@ class LoteItem extends Model
 {
     protected $primaryKey = null;
     public $incrementing = false;
+    protected $appends = ['subtotal'];
 
     protected function casts(): array
     {

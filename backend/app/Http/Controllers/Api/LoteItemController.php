@@ -43,10 +43,13 @@ class LoteItemController extends Controller
 
     public function destroy(Lote $lote, int $productId): JsonResponse
     {
-        LoteItem::where('lote_id', $lote->id)
+        $deleted = LoteItem::where('lote_id', $lote->id)
             ->where('product_id', $productId)
-            ->firstOrFail()
             ->delete();
+
+        if ($deleted === 0) {
+            abort(404, 'Item não encontrado no lote.');
+        }
 
         return response()->json(null, 204);
     }

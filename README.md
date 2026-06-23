@@ -87,6 +87,32 @@ Vue 3 + Vuetify 4 + TypeScript + Vite (Options API, Pinia para estado).
 - **Roteamento** (`router/index.ts`): rotas para login, usuários e produtos, com guarda de
   navegação que redireciona para `/login` quando não autenticado.
 
+## Pipeline CI/CD
+
+Acionado em pull requests para `main`. Detecta quais partes do monorepo mudaram e executa apenas os jobs relevantes.
+
+```mermaid
+flowchart TD
+    PR([Pull Request]) --> changes[changes\ndetecta frontend / backend]
+
+    changes -->|frontend mudou| FI[frontend-install\nnpm ci]
+    changes -->|backend mudou| BI[backend-install\ncomposer install]
+
+    FI --> FB[frontend-build\nnpm run build]
+    FI --> FL[frontend-lint\nnpm run lint]
+
+    FB --> FT[frontend-typecheck\nnpm run type-check]
+    FB --> FE[frontend-e2e\nPlaywright 28 testes]
+    FL --> FT
+    FL --> FE
+
+    BI --> BL[backend-lint\nPint --test]
+    BI --> BT[backend-test\nphp artisan test]
+
+    BL --> BB[backend-build\ndocker build]
+    BT --> BB
+```
+
 ## Testes
 
 - **Postman/Newman**: a coleção em [`postman/`](./postman) cobre os fluxos principais da API

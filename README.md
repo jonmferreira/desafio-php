@@ -2,10 +2,10 @@
 
 Sistema de controle de estoque desenvolvido como desafio técnico, adaptado ao domínio da
 Systock. Permite o cadastro e gerenciamento de usuários (com perfis `admin`/`operator`),
-categorias e produtos, além do registro de movimentações de entrada e saída de estoque,
-com o saldo de cada produto calculado a partir do histórico de movimentações. O projeto foi
-construído com atenção especial à segurança da API, com mitigações para os principais vetores
-do OWASP API Security Top 10 (ver seção "Análise de segurança" abaixo).
+categorias e produtos, além do recebimento de mercadorias via **lotes** (nota fiscal/pedido),
+com o estoque organizado em **fardos** por lote e saídas registradas explicitamente. O projeto
+foi construído com atenção especial à segurança da API, com mitigações para os principais
+vetores do OWASP API Security Top 10 (ver seção "Análise de segurança" abaixo).
 
 ## Como subir o projeto
 
@@ -50,9 +50,11 @@ A API utiliza Laravel Sanctum no modelo de API Token (Bearer):
 ## Modelo de Dados e Adaptação do Domínio
 
 O enunciado original pede `User hasMany Product` (produto pertence diretamente a um usuário).
-O projeto adota um domínio de **controle de estoque**: o usuário interage com produtos via
-**movimentações** (`stock_movements`), o que mantém a relação exigida e acrescenta
-rastreabilidade completa de cada entrada e saída.
+O projeto adota um domínio de **controle de estoque por lotes**: o usuário recebe mercadorias
+via **lotes** (`lotes`), e cada lote contém itens por produto com quantidade em **fardos**
+(`lote_items`). Saídas de mercadoria são registradas explicitamente em `saidas`, debitando
+fardos do lote correspondente. Essa estrutura mantém a relação exigida e acrescenta
+rastreabilidade completa de cada entrada, saída e avaria.
 
 ```mermaid
 erDiagram
@@ -74,8 +76,57 @@ erDiagram
         string name
         string description
         string unit
-        int min_quantity
+        decimal peso
+        int min_fardos
         decimal price
+    }
+    lotes {
+        int id PK
+        int user_id FK
+        int numero "auto-incremental por cliente"
+        decimal frete
+        datetime created_at
+        datetime updated_at
+    }
+    lote_items {
+        int lote_id PK,FK
+        int product_id PK,FK
+        int quantidade_fardos
+        int itens_por_fardo
+        decimal valor_unitario
+    }
+    avarias {
+        int id PK
+        int lote_id FK
+        string descricao
+        decimal valor
+        datetime created_at
+    }
+    saidas {
+        int id PK
+        int lote_id FK
+        int product_id FK
+        int user_id FK
+        int quantidade_fardos
+        string motivo
+        datetime created_at
+    }
+    audits {
+        int id PK
+        int user_id FK
+        string event "created | updated | deleted"
+        string auditable_type
+        int auditable_id
+        json old_values
+        json new_values
+        string ip_address
+    }
+    idempotency_keys {
+        int id PK
+        int user_id FK
+        string key
+        string route
+        json response
     }
     stock_movements {
         int id PK
@@ -86,50 +137,72 @@ erDiagram
         string reason
         datetime created_at
     }
-    idempotency_keys {
-        int id PK
-        int user_id FK
-        string key
-        string route
-        json response
-    }
 
-    users       ||--o{ stock_movements    : "realiza"
-    products    ||--o{ stock_movements    : "afeta"
+    users       ||--o{ lotes              : "recebe"
+    lotes       ||--o{ lote_items         : "contém"
+    products    ||--o{ lote_items         : "compõe"
+    lotes       ||--o{ avarias            : "possui"
+    lotes       ||--o{ saidas             : "origina"
+    products    ||--o{ saidas             : "afeta"
+    users       ||--o{ saidas             : "registra"
     categories  ||--o{ products           : "classifica"
     users       ||--o{ idempotency_keys   : "possui"
+    users       ||--o{ audits             : "gera"
+    users       ||--o{ stock_movements    : "realiza"
+    products    ||--o{ stock_movements    : "afeta"
 ```
+
+> `stock_movements` é mantida apenas para alimentar o relatório de giro dos últimos 30 dias
+> (`DemoMovementsSeeder`). O controle de estoque efetivo usa a cadeia `lotes → lote_items → saidas`.
+
+### Campos calculados (nunca armazenados)
+
+| Campo | Fórmula |
+|---|---|
+| Subtotal do item | `valor_unitario × itens_por_fardo × quantidade_fardos` |
+| Peso do item | `product.peso × itens_por_fardo × quantidade_fardos` |
+| Peso total do lote | `SUM(peso item)` |
+| Total de avarias | `SUM(avarias.valor)` |
+| Total do lote | `SUM(subtotal item) + frete + total avarias` |
+| Estoque crítico | `SUM(lote_items.quantidade_fardos) < product.min_fardos` |
+| Capital por cliente | `SUM(valor_unitario × itens_por_fardo × quantidade_fardos)` por `user` via `lotes` |
 
 ### Mapeamento requisito → implementação
 
 | Requisito do enunciado | Implementação no Systock |
 |---|---|
-| `User hasMany Product` | `User hasMany StockMovement` ← `Product` — o usuário é vinculado ao produto via cada movimentação registrada |
-| Visualizar produtos associados ao usuário | Relatório de giro (`GET /reports/giro`): top 10 produtos movimentados + `consultas.sql` query 3 (ranking de usuários por movimentações) |
-| Produto mais caro por usuário | `consultas.sql` query 1: maior valor em estoque disponível por produto (`preço × saldo atual`) via soma de movimentações |
-| Quantidade de produtos por faixa | `consultas.sql` query 2: volume movimentado por dia nos últimos 30 dias (adaptado para série temporal de estoque) |
+| `User hasMany Product` | `User hasMany Lote hasMany LoteItem belongsTo Product` — o usuário é vinculado ao produto via lotes de recebimento |
+| Visualizar produtos associados ao usuário | `GET /reports/estoque-produtos`: produtos em estoque por lote de cada cliente; `GET /lotes?user_id={id}`: lotes do cliente com itens |
+| Produto mais caro por usuário | `consultas.sql` query 1: capital em estoque por cliente (`SUM(valor_unitario × itens_por_fardo × quantidade_fardos)` agrupado por usuário via lotes) |
+| Quantidade de produtos por faixa | `consultas.sql` query 2: produtos com estoque crítico (fardos em lote abaixo de `min_fardos`); query 3: maior estoque por produto por cliente |
 
 ## Arquitetura — Backend
 
 Laravel 13 + PHP 8.4, servido via FrankenPHP.
 
 - **Controllers** (`app/Http/Controllers/Api`): `AuthController`, `UserController`,
-  `CategoryController`, `ProductController`, `StockMovementController`. Validações de entrada
-  são feitas via Form Requests (`app/Http/Requests`), e os campos aceitos em cada operação são
+  `CategoryController`, `ProductController`, `LoteController`, `LoteItemController`,
+  `AvariaController`, `SaidaController`, `ReportController`. Validações de entrada são feitas
+  via Form Requests (`app/Http/Requests`), e os campos aceitos em cada operação são
   controlados pelos atributos `#[Fillable]` dos models, prevenindo mass assignment (API3).
-- **Models** (`app/Models`): `User`, `Category`, `Product`, `StockMovement`, `IdempotencyKey`.
+- **Models** (`app/Models`): `User`, `Category`, `Product`, `Lote`, `LoteItem`, `Avaria`,
+  `Saida`, `Audit`, `StockMovement`, `IdempotencyKey`.
+- **Trait `Auditable`**: hook `boot` nos modelos registra automaticamente eventos
+  `created`/`updated`/`deleted` na tabela `audits` com valores anteriores e novos em JSON.
 - **Autorização**: `UserPolicy` (`app/Policies`) restringe consulta/edição/exclusão de
   `/api/users/{id}` ao próprio usuário ou a um administrador (mitigação de IDOR — API1).
+  Middleware `admin` protege as rotas de escrita de produtos e exclusão de lotes.
 - **Autenticação**: Laravel Sanctum (tokens de API).
-- **Idempotência**: middleware `idempotent` (`EnsureIdempotency`) cacheia a resposta de
-  `POST /api/products/{product}/movements` por usuário/chave/rota, evitando duplicidade em
-  reenvios (`X-Idempotent-Replay: true` na resposta cacheada).
+- **Concorrência em saídas**: `SaidaController::store` executa dentro de `DB::transaction`
+  com `lockForUpdate()` no `LoteItem`, garantindo que saídas simultâneas do mesmo lote não
+  gerem saldo negativo de fardos.
+- **Idempotência**: middleware `idempotent` (`EnsureIdempotency`) cacheia respostas POST por
+  usuário/chave/rota, evitando duplicidade em reenvios (`X-Idempotent-Replay: true`).
 - **Documentação OpenAPI**: L5-Swagger, disponível em `/api/documentation`. Em produção, o
   middleware `RestrictSwaggerToNonProduction` retorna 404 para essa rota (API9).
-- **Modelo de dados**: `users` (com coluna `role`: `admin`/`operator`), `categories`,
-  `products`, `stock_movements` (tipo `in`/`out`, vinculado a `product` e `user`) e
-  `idempotency_keys` (suporte ao middleware de idempotência). O saldo de cada produto é
-  calculado dinamicamente a partir da soma das movimentações de entrada e saída.
+- **Relatórios** (`GET /reports/*`): `capital-clientes` (capital em estoque por cliente),
+  `estoque-produtos` (fardos disponíveis por produto/lote), `ruptura` (produtos com fardos
+  abaixo de `min_fardos`), `giro` (série temporal de movimentações dos últimos 30 dias).
 
 ## Arquitetura — Frontend
 
@@ -137,17 +210,22 @@ Vue 3 + Vuetify 4 + TypeScript + Vite (Options API, Pinia para estado).
 
 - **`views/`**: cada tela fica em seu próprio diretório, com `*.vue`, `store.ts` (Pinia,
   estado e ações específicas da tela) e `integrations/` (chamadas à API e tipos de
-  request/response). Telas atuais: `LoginView`, `users/UsersView`, `users/UserFormView`,
-  `products/ProductsView`, `products/ProductFormView`.
-- **`stores/`**: stores Pinia globais — `auth` (usuário autenticado, token, login/logout) e
-  `notifications` (snackbars/avisos).
+  request/response). Telas: `LoginView`, `users/UsersView`, `users/UserFormView`,
+  `products/ProductsView`, `products/ProductFormView`, `LotesView/LotesView` (lista paginada
+  de lotes), `LotesView/LoteFormView` (criação de lote com itens inline), `LotesView/LoteDetailView`
+  (detalhe com itens, avarias e saídas; cards de totais), `LotesView/SaidaFormView` (registro
+  de saída de fardos de um lote).
+- **`stores/`**: stores Pinia globais — `auth` (usuário autenticado, token, login/logout),
+  `notifications` (snackbars/avisos) e `ruptura` (contagem de produtos com estoque crítico,
+  compartilhada entre Dashboard e nav drawer).
 - **`services/`**: instâncias Axios — `api.ts` (autenticada, injeta o Bearer token) e
   `publicApi.ts` (rotas públicas, como login).
 - **`helpers/`**: funções utilitárias compartilhadas, como `cpf` (formatação), `pagination`,
   `select` e `permissions` (`canManageUser`, que esconde ações restritas na UI com base no
   `role`/`id` do usuário autenticado, refletindo a `UserPolicy` do backend).
-- **Roteamento** (`router/index.ts`): rotas para login, usuários e produtos, com guarda de
-  navegação que redireciona para `/login` quando não autenticado.
+- **Roteamento** (`router/index.ts`): rotas para login, usuários, produtos e lotes
+  (`/lotes`, `/lotes/new`, `/lotes/:id`, `/lotes/:id/saida`), com guarda de navegação que
+  redireciona para `/login` quando não autenticado.
 
 ## Pipeline CI/CD
 
@@ -164,7 +242,7 @@ flowchart TD
     FI --> FL[frontend-lint\nnpm run lint]
 
     FB --> FT[frontend-typecheck\nnpm run type-check]
-    FB --> FE[frontend-e2e\nPlaywright 28 testes]
+    FB --> FE[frontend-e2e\nPlaywright 34 testes]
     FL --> FT
     FL --> FE
 
@@ -201,7 +279,7 @@ contra o backend implementado (v1.0).
 | 3 | API3: Broken Object Property Level Authorization (Mass Assignment) | 🛡️ Blindado | `Users / Criar usuario - Mass Assignment (role=admin)`: campo `role` enviado no payload é ignorado (`$fillable`/`Form Requests` com `validated()`) |
 | 4 | API4: Unrestricted Resource Consumption | 🛡️ Blindado | `Products / Criar produto - payload oversized`: input gigante rejeitado com 422 pela validação |
 | 5 | API5: Broken Function Level Authorization | 🛡️ Blindado | `UserPolicy` restringe `/api/users/{id}` a admin/próprio usuário (ver item 1); middleware `admin` (EnsureAdmin) protege todas as rotas de escrita e listagem de usuários (`POST /users`, `PUT/DELETE /users/{id}`, `GET /users`, `POST/PUT/DELETE /products`, `GET /products/export`) — operadores que tentam acessar retornam 403 |
-| 6 | API6: Unrestricted Access to Sensitive Business Flows (Race Condition) | 🛡️ Blindado | `Movements / Race Condition - saida concorrente do mesmo lote (API6)`: requisições concorrentes de saída resolvem com 201 ou 422, sem 500 nem `quantity_rem` negativo |
+| 6 | API6: Unrestricted Access to Sensitive Business Flows (Race Condition) | 🛡️ Blindado | `Saidas / Race Condition - saida concorrente do mesmo lote (API6)`: requisições concorrentes de saída em `POST /saidas` resolvem com 201 ou 422, sem 500 nem `quantidade_fardos` negativo — `SaidaController` executa em transação com `lockForUpdate()` no `LoteItem` |
 | 7 | API7: Server-Side Request Forgery (SSRF) | N/A | Sem campo de URL externa no v1.0 |
 | 8 | API8: Security Misconfiguration | 🛡️ Blindado | `.env` fora do versionamento (`.gitignore`), `config/cors.php` restrito a `FRONTEND_URL`, `APP_DEBUG=false` em `.env.example` |
 | 9 | API9: Improper Inventory Management | 🛡️ Blindado | Documentação OpenAPI (`/api/documentation`, L5-Swagger) protegida pelo middleware `RestrictSwaggerToNonProduction`, que retorna 404 quando `APP_ENV=production` |
@@ -210,3 +288,76 @@ contra o backend implementado (v1.0).
 | 12 | Exposição de credenciais no código-fonte | 🛡️ Blindado | Nenhum `.env` presente no histórico do Git (`.gitignore` desde o primeiro commit) |
 
 **Legenda:** 🛡️ Blindado · ⚠️ Vulnerável · ⏳ A testar · N/A Não aplicável
+
+## Decisões de Adaptação do Domínio
+
+O enunciado especifica uma relação direta `User hasMany Product`. Abaixo estão as decisões de
+modelagem tomadas e o raciocínio por trás de cada uma.
+
+### Por que lotes em vez de movimentações diretas?
+
+O domínio Systock trabalha com **recebimentos de mercadoria em volume** (nota fiscal / pedido
+de compra): um cliente recebe um lote com vários produtos em quantidades de fardos, e o estoque
+de cada produto é o resultado acumulado de todos os lotes daquele cliente menos as saídas
+registradas. Modelar isso como `User → Lote → LoteItem(produto, fardos)` é mais fiel ao
+processo real e mantém a rastreabilidade por nota fiscal.
+
+### Fluxo de dados — recebimento e saída
+
+```mermaid
+sequenceDiagram
+    actor Admin
+    actor Operador
+    participant API
+    participant DB
+
+    Admin->>API: POST /lotes (user_id, frete)
+    API->>DB: INSERT lotes (numero auto-inc por cliente)
+    Admin->>API: POST /lotes/{id}/items (product_id, qtd_fardos, itens_por_fardo, valor)
+    API->>DB: INSERT lote_items
+
+    Operador->>API: POST /saidas (lote_id, product_id, qtd_fardos)
+    API->>DB: BEGIN TRANSACTION
+    API->>DB: SELECT lote_items WHERE lote_id=? AND product_id=? FOR UPDATE
+    alt fardos suficientes
+        API->>DB: UPDATE lote_items SET quantidade_fardos -= qtd
+        API->>DB: INSERT saidas
+        API->>DB: COMMIT
+        API-->>Operador: 201 Created
+    else fardos insuficientes
+        API->>DB: ROLLBACK
+        API-->>Operador: 422 Unprocessable
+    end
+```
+
+### Numeração automática de lotes por cliente
+
+Cada cliente (`user_id`) tem sua própria sequência de números de lote, independente dos demais.
+O número é atribuído no `booted()` do model `Lote` ao inserir:
+
+```
+numero = MAX(numero WHERE user_id = ?) + 1
+```
+
+Isso garante que o cliente 1 tenha `#1, #2, #3...` e o cliente 2 também tenha `#1, #2, #3...`,
+sem conflito, e sem depender de sequence de banco que não sobrevive a resets de dados de demo.
+
+### Relação `User hasMany Product` via lotes
+
+```mermaid
+graph LR
+    U[User] -->|hasMany| L[Lote]
+    L -->|hasMany| LI[LoteItem]
+    LI -->|belongsTo| P[Product]
+    U -->|indiretamente hasMany Products| P
+```
+
+O usuário acessa os produtos que possui via `User → Lote → LoteItem → Product`. Os endpoints
+`GET /lotes?user_id={id}` e `GET /reports/estoque-produtos` materializam essa relação para
+consulta. As três queries em `consultas.sql` expressam o mesmo em SQL puro.
+
+### `stock_movements` preservada
+
+A tabela `stock_movements` foi mantida para alimentar o gráfico de giro (`DashboardView`) com
+dados de série temporal dos últimos 30 dias, populada pelo `DemoMovementsSeeder`. O controle
+de estoque efetivo (saldo, saídas, capital) usa exclusivamente `lotes → lote_items → saidas`.

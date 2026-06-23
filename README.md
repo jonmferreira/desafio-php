@@ -47,6 +47,41 @@ A API utiliza Laravel Sanctum no modelo de API Token (Bearer):
   `Authorization: Bearer <token>`.
 - `POST /api/logout` (autenticado) — revoga o token atual e retorna 204.
 
+## Perfis e Casos de Uso
+
+```mermaid
+graph LR
+    Admin(["👤 Admin"])
+    Operator(["👤 Operador"])
+
+    subgraph excl_admin ["Exclusivo — Admin"]
+        A1["Cadastrar / editar / excluir usuários"]
+        A2["Cadastrar / editar / excluir produtos"]
+        A3["Gerenciar categorias"]
+        A4["Excluir lotes"]
+        A5["Exportar produtos CSV"]
+    end
+
+    subgraph excl_op ["Exclusivo — Operador"]
+        O1["Criar lotes (cabeçalho + frete)"]
+        O2["Adicionar / editar itens do lote"]
+        O3["Registrar avarias no lote"]
+        O4["Registrar saídas de fardos"]
+    end
+
+    subgraph shared ["Admin e Operador"]
+        S1["Visualizar dashboard\n(estoque crítico, valor total, giro)"]
+        S2["Listar e detalhar lotes\n(itens, avarias, saídas, totais)"]
+        S3["Consultar relatórios\n(capital por cliente, estoque, ruptura, giro)"]
+        S4["Gerenciar próprio perfil"]
+    end
+
+    Admin --> excl_admin
+    Admin --> shared
+    Operator --> excl_op
+    Operator --> shared
+```
+
 ## Modelo de Dados e Adaptação do Domínio
 
 O enunciado original pede `User hasMany Product` (produto pertence diretamente a um usuário).

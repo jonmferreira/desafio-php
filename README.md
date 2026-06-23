@@ -227,6 +227,32 @@ Vue 3 + Vuetify 4 + TypeScript + Vite (Options API, Pinia para estado).
   (`/lotes`, `/lotes/new`, `/lotes/:id`, `/lotes/:id/saida`), com guarda de navegação que
   redireciona para `/login` quando não autenticado.
 
+### Navegação — visualização de estoque e lotes
+
+```mermaid
+flowchart TD
+    DB[DashboardView\n/dashboard]
+    DB -->|"N produtos com estoque crítico\n(clica no card)"| REP
+
+    NAV[Nav Drawer]
+    NAV -->|Lotes| LV
+    NAV -->|Produtos| PV
+    NAV -->|Relatórios| REP
+
+    LV[LotesView\n/lotes\nlista paginada de lotes por cliente]
+    LV -->|Novo lote| LF[LoteFormView\n/lotes/new\nheader + itens inline com subtotal]
+    LV -->|Ver lote| LD[LoteDetailView\n/lotes/:id\nitens · avarias · saídas · peso total · total R$]
+    LD -->|Registrar saída| SF[SaidaFormView\n/lotes/:id/saida\nseleciona produto · qtd fardos · motivo]
+
+    PV[ProductsView\n/products\nlista com peso · min_fardos · badge crítico]
+    PV -->|Editar produto| PF[ProductFormView\n/products/:id/edit\ncampos peso e min_fardos]
+
+    REP[ReportsView\n/reports]
+    REP -->|aba Ruptura| RUP[tabela estoque crítico\nSUM fardos em lote vs min_fardos]
+    REP -->|aba Capital| CAP[tabela capital por cliente\nSUM valor_unitario×itens×fardos]
+    REP -->|aba Giro| GIR[gráfico série temporal\nstock_movements últimos 30 dias]
+```
+
 ## Pipeline CI/CD
 
 Acionado em pull requests para `main`. Detecta quais partes do monorepo mudaram e executa apenas os jobs relevantes.

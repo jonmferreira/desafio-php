@@ -47,6 +47,68 @@ A API utiliza Laravel Sanctum no modelo de API Token (Bearer):
   `Authorization: Bearer <token>`.
 - `POST /api/logout` (autenticado) — revoga o token atual e retorna 204.
 
+## Modelo de Dados e Adaptação do Domínio
+
+O enunciado original pede `User hasMany Product` (produto pertence diretamente a um usuário).
+O projeto adota um domínio de **controle de estoque**: o usuário interage com produtos via
+**movimentações** (`stock_movements`), o que mantém a relação exigida e acrescenta
+rastreabilidade completa de cada entrada e saída.
+
+```mermaid
+erDiagram
+    users {
+        int id PK
+        string name
+        string cpf
+        string email
+        string role "admin | operator"
+    }
+    categories {
+        int id PK
+        string name
+    }
+    products {
+        int id PK
+        int category_id FK
+        string sku
+        string name
+        string description
+        string unit
+        int min_quantity
+        decimal price
+    }
+    stock_movements {
+        int id PK
+        int product_id FK
+        int user_id FK
+        string type "in | out"
+        int quantity
+        string reason
+        datetime created_at
+    }
+    idempotency_keys {
+        int id PK
+        int user_id FK
+        string key
+        string route
+        json response
+    }
+
+    users       ||--o{ stock_movements    : "realiza"
+    products    ||--o{ stock_movements    : "afeta"
+    categories  ||--o{ products           : "classifica"
+    users       ||--o{ idempotency_keys   : "possui"
+```
+
+### Mapeamento requisito → implementação
+
+| Requisito do enunciado | Implementação no Systock |
+|---|---|
+| `User hasMany Product` | `User hasMany StockMovement` ← `Product` — o usuário é vinculado ao produto via cada movimentação registrada |
+| Visualizar produtos associados ao usuário | Relatório de giro (`GET /reports/giro`): top 10 produtos movimentados + `consultas.sql` query 3 (ranking de usuários por movimentações) |
+| Produto mais caro por usuário | `consultas.sql` query 1: maior valor em estoque disponível por produto (`preço × saldo atual`) via soma de movimentações |
+| Quantidade de produtos por faixa | `consultas.sql` query 2: volume movimentado por dia nos últimos 30 dias (adaptado para série temporal de estoque) |
+
 ## Arquitetura — Backend
 
 Laravel 13 + PHP 8.4, servido via FrankenPHP.

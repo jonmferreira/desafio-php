@@ -16,9 +16,9 @@ class Product extends Model
     protected function casts(): array
     {
         return [
-            'peso'       => 'decimal:3',
+            'peso' => 'decimal:3',
             'min_fardos' => 'integer',
-            'price'      => 'decimal:2',
+            'price' => 'decimal:2',
         ];
     }
 

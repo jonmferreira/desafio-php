@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class MovementTest extends TestCase
@@ -21,13 +22,13 @@ class MovementTest extends TestCase
     {
         parent::setUp();
         $this->operator = User::factory()->create();
-        $this->product  = Product::factory()->create([
+        $this->product = Product::factory()->create([
             'category_id' => Category::factory()->create()->id,
-            'min_fardos'  => 5,
+            'min_fardos' => 5,
         ]);
     }
 
-    private function postMovement(array $payload, string $key = 'key-default'): \Illuminate\Testing\TestResponse
+    private function postMovement(array $payload, string $key = 'key-default'): TestResponse
     {
         return $this->actingAs($this->operator)
             ->postJson(
@@ -89,7 +90,7 @@ class MovementTest extends TestCase
     {
         $payload = ['type' => 'in', 'quantity' => 15, 'reason' => 'Entrada'];
 
-        $first  = $this->postMovement($payload, 'idem-key-abc')->assertCreated();
+        $first = $this->postMovement($payload, 'idem-key-abc')->assertCreated();
         $second = $this->postMovement($payload, 'idem-key-abc')->assertCreated();
 
         $this->assertEquals($first->json('id'), $second->json('id'));

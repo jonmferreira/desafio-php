@@ -23,7 +23,7 @@ class ProductTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->admin    = User::factory()->admin()->create();
+        $this->admin = User::factory()->admin()->create();
         $this->operator = User::factory()->create();
         $this->category = Category::factory()->create();
     }
@@ -32,12 +32,12 @@ class ProductTest extends TestCase
     {
         return array_merge([
             'category_id' => $this->category->id,
-            'sku'         => 'SKU-TEST-001',
-            'name'        => 'Produto Teste',
-            'unit'        => 'un',
-            'peso'        => '1.500',
-            'min_fardos'  => 5,
-            'price'       => '29.90',
+            'sku' => 'SKU-TEST-001',
+            'name' => 'Produto Teste',
+            'unit' => 'un',
+            'peso' => '1.500',
+            'min_fardos' => 5,
+            'price' => '29.90',
         ], $overrides);
     }
 
@@ -126,18 +126,18 @@ class ProductTest extends TestCase
         // Produto sem fardos em lotes → estoque crítico (min_fardos=10, 0 em lotes)
         $low = Product::factory()->create([
             'category_id' => $this->category->id,
-            'min_fardos'  => 10,
+            'min_fardos' => 10,
         ]);
 
         // Produto com fardos suficientes em lotes → ok
-        $ok   = Product::factory()->create(['category_id' => $this->category->id, 'min_fardos' => 3]);
+        $ok = Product::factory()->create(['category_id' => $this->category->id, 'min_fardos' => 3]);
         $lote = Lote::factory()->create(['user_id' => $this->operator->id]);
         LoteItem::create([
-            'lote_id'          => $lote->id,
-            'product_id'       => $ok->id,
+            'lote_id' => $lote->id,
+            'product_id' => $ok->id,
             'quantidade_fardos' => 10,
-            'itens_por_fardo'  => 12,
-            'valor_unitario'   => '10.00',
+            'itens_por_fardo' => 12,
+            'valor_unitario' => '10.00',
         ]);
 
         $response = $this->actingAs($this->operator)

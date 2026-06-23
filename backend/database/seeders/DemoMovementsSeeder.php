@@ -14,7 +14,7 @@ class DemoMovementsSeeder extends Seeder
             return;
         }
 
-        $adminId    = DB::table('users')->where('email', 'admin@systock.com.br')->value('id');
+        $adminId = DB::table('users')->where('email', 'admin@systock.com.br')->value('id');
         $operatorId = DB::table('users')->where('email', 'operador@systock.com.br')->value('id');
 
         if (! $adminId || ! $operatorId) {
@@ -30,7 +30,7 @@ class DemoMovementsSeeder extends Seeder
         $rows = [];
         $base = now();
 
-        $inReasons  = ['Reposição de estoque', 'Compra fornecedor', 'Devolução cliente', 'Transferência entrada'];
+        $inReasons = ['Reposição de estoque', 'Compra fornecedor', 'Devolução cliente', 'Transferência entrada'];
         $outReasons = ['Venda balcão', 'Venda delivery', 'Perda/vencimento', 'Transferência saída'];
 
         foreach ($productIds as $productId) {
@@ -42,10 +42,10 @@ class DemoMovementsSeeder extends Seeder
                     $ts = $date->copy()->setTime(rand(7, 12), rand(0, 59), 0)->toDateTimeString();
                     $rows[] = [
                         'product_id' => $productId,
-                        'user_id'    => $adminId,
-                        'type'       => 'in',
-                        'quantity'   => rand(10, 80),
-                        'reason'     => $inReasons[array_rand($inReasons)],
+                        'user_id' => $adminId,
+                        'type' => 'in',
+                        'quantity' => rand(10, 80),
+                        'reason' => $inReasons[array_rand($inReasons)],
                         'created_at' => $ts,
                         'updated_at' => $ts,
                     ];
@@ -56,10 +56,10 @@ class DemoMovementsSeeder extends Seeder
                     $ts = $date->copy()->setTime(rand(13, 20), rand(0, 59), 0)->toDateTimeString();
                     $rows[] = [
                         'product_id' => $productId,
-                        'user_id'    => $operatorId,
-                        'type'       => 'out',
-                        'quantity'   => rand(3, 30),
-                        'reason'     => $outReasons[array_rand($outReasons)],
+                        'user_id' => $operatorId,
+                        'type' => 'out',
+                        'quantity' => rand(3, 30),
+                        'reason' => $outReasons[array_rand($outReasons)],
                         'created_at' => $ts,
                         'updated_at' => $ts,
                     ];

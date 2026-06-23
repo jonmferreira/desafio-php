@@ -20,7 +20,7 @@ class LoteFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'frete'   => fake()->randomFloat(2, 0, 300),
+            'frete' => fake()->randomFloat(2, 0, 300),
         ];
     }
 }

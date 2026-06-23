@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin'      => EnsureAdmin::class,
+            'admin' => EnsureAdmin::class,
             'idempotent' => EnsureIdempotency::class,
         ]);
 

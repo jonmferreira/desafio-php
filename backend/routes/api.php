@@ -23,12 +23,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/categories', [CategoryController::class, 'store'])->middleware('admin');
 
     // Relatórios
-    Route::get('/reports/stock-flow',         [ReportController::class, 'stockFlow']);
-    Route::get('/reports/ruptura',            [ReportController::class, 'ruptura']);
-    Route::get('/reports/valor-estoque',      [ReportController::class, 'valorEstoque']);
-    Route::get('/reports/giro',               [ReportController::class, 'giro']);
-    Route::get('/reports/capital-clientes',   [ReportController::class, 'capitalPorCliente']);
-    Route::get('/reports/estoque-produtos',   [ReportController::class, 'estoquePorProduto']);
+    Route::get('/reports/stock-flow', [ReportController::class, 'stockFlow']);
+    Route::get('/reports/ruptura', [ReportController::class, 'ruptura']);
+    Route::get('/reports/valor-estoque', [ReportController::class, 'valorEstoque']);
+    Route::get('/reports/giro', [ReportController::class, 'giro']);
+    Route::get('/reports/capital-clientes', [ReportController::class, 'capitalPorCliente']);
+    Route::get('/reports/estoque-produtos', [ReportController::class, 'estoquePorProduto']);
 
     // Produtos: export antes de {product} para não conflitar com route-model binding.
     Route::get('/products/export', [ProductController::class, 'export'])->middleware('admin');

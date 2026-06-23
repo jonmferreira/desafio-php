@@ -48,10 +48,10 @@ class UserTest extends TestCase
 
         $this->actingAs($this->admin)
             ->postJson('/api/users', [
-                'name'                  => 'Novo Operador',
-                'cpf'                   => $cpf,
-                'email'                 => 'novo@example.com',
-                'password'              => 'password123',
+                'name' => 'Novo Operador',
+                'cpf' => $cpf,
+                'email' => 'novo@example.com',
+                'password' => 'password123',
                 'password_confirmation' => 'password123',
             ])
             ->assertCreated()
@@ -62,10 +62,10 @@ class UserTest extends TestCase
     {
         $this->actingAs($this->admin)
             ->postJson('/api/users', [
-                'name'                  => 'Test',
-                'cpf'                   => '00000000000',
-                'email'                 => 'test@example.com',
-                'password'              => 'password123',
+                'name' => 'Test',
+                'cpf' => '00000000000',
+                'email' => 'test@example.com',
+                'password' => 'password123',
                 'password_confirmation' => 'password123',
             ])
             ->assertUnprocessable()
@@ -76,10 +76,10 @@ class UserTest extends TestCase
     {
         $this->actingAs($this->admin)
             ->postJson('/api/users', [
-                'name'                  => 'Test',
-                'cpf'                   => Cpf::generate(),
-                'email'                 => $this->operator->email,
-                'password'              => 'password123',
+                'name' => 'Test',
+                'cpf' => Cpf::generate(),
+                'email' => $this->operator->email,
+                'password' => 'password123',
                 'password_confirmation' => 'password123',
             ])
             ->assertUnprocessable()
@@ -90,10 +90,10 @@ class UserTest extends TestCase
     {
         $this->actingAs($this->admin)
             ->postJson('/api/users', [
-                'name'                  => 'Test',
-                'cpf'                   => Cpf::generate(),
-                'email'                 => 'short@example.com',
-                'password'              => '1234567',
+                'name' => 'Test',
+                'cpf' => Cpf::generate(),
+                'email' => 'short@example.com',
+                'password' => '1234567',
                 'password_confirmation' => '1234567',
             ])
             ->assertUnprocessable()

@@ -28,8 +28,8 @@ class LoteItemController extends Controller
     {
         $validated = $request->validate([
             'quantidade_fardos' => ['sometimes', 'required', 'integer', 'min:1', 'max:1000000'],
-            'itens_por_fardo'   => ['sometimes', 'required', 'integer', 'min:1', 'max:10000'],
-            'valor_unitario'    => ['sometimes', 'required', 'numeric', 'min:0', 'max:999999999.99'],
+            'itens_por_fardo' => ['sometimes', 'required', 'integer', 'min:1', 'max:10000'],
+            'valor_unitario' => ['sometimes', 'required', 'numeric', 'min:0', 'max:999999999.99'],
         ]);
 
         $item = LoteItem::where('lote_id', $lote->id)

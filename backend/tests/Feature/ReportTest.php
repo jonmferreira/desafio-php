@@ -21,18 +21,18 @@ class ReportTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->admin    = User::factory()->admin()->create();
+        $this->admin = User::factory()->admin()->create();
         $this->operator = User::factory()->create();
     }
 
     private function addLoteItem(Lote $lote, Product $product, int $fardos, int $itensPorFardo = 12, string $valor = '10.00'): void
     {
         LoteItem::create([
-            'lote_id'          => $lote->id,
-            'product_id'       => $product->id,
+            'lote_id' => $lote->id,
+            'product_id' => $product->id,
             'quantidade_fardos' => $fardos,
-            'itens_por_fardo'  => $itensPorFardo,
-            'valor_unitario'   => $valor,
+            'itens_por_fardo' => $itensPorFardo,
+            'valor_unitario' => $valor,
         ]);
     }
 
@@ -44,7 +44,7 @@ class ReportTest extends TestCase
 
         $low = Product::factory()->create(['category_id' => $category->id, 'min_fardos' => 10]);
 
-        $ok   = Product::factory()->create(['category_id' => $category->id, 'min_fardos' => 3]);
+        $ok = Product::factory()->create(['category_id' => $category->id, 'min_fardos' => 3]);
         $lote = Lote::factory()->create(['user_id' => $this->operator->id]);
         $this->addLoteItem($lote, $ok, 10);
 
@@ -61,8 +61,8 @@ class ReportTest extends TestCase
     public function test_ruptura_is_empty_when_all_products_have_adequate_stock(): void
     {
         $category = Category::factory()->create();
-        $product  = Product::factory()->create(['category_id' => $category->id, 'min_fardos' => 5]);
-        $lote     = Lote::factory()->create(['user_id' => $this->operator->id]);
+        $product = Product::factory()->create(['category_id' => $category->id, 'min_fardos' => 5]);
+        $lote = Lote::factory()->create(['user_id' => $this->operator->id]);
         $this->addLoteItem($lote, $product, 20);
 
         $this->actingAs($this->operator)
@@ -76,7 +76,7 @@ class ReportTest extends TestCase
     public function test_capital_clientes_returns_sum_per_user(): void
     {
         $category = Category::factory()->create();
-        $product  = Product::factory()->create(['category_id' => $category->id]);
+        $product = Product::factory()->create(['category_id' => $category->id]);
 
         $lote = Lote::factory()->create(['user_id' => $this->operator->id]);
         // capital = 5 fardos × 10 itens × R$20 = R$1.000
@@ -110,8 +110,8 @@ class ReportTest extends TestCase
     public function test_estoque_produtos_returns_fardos_per_product(): void
     {
         $category = Category::factory()->create();
-        $product  = Product::factory()->create(['category_id' => $category->id]);
-        $lote     = Lote::factory()->create(['user_id' => $this->operator->id]);
+        $product = Product::factory()->create(['category_id' => $category->id]);
+        $lote = Lote::factory()->create(['user_id' => $this->operator->id]);
         $this->addLoteItem($lote, $product, 8);
 
         $response = $this->actingAs($this->admin)
@@ -129,8 +129,8 @@ class ReportTest extends TestCase
     public function test_giro_returns_top_products_by_quantity(): void
     {
         $category = Category::factory()->create();
-        $top      = Product::factory()->create(['category_id' => $category->id]);
-        $low      = Product::factory()->create(['category_id' => $category->id]);
+        $top = Product::factory()->create(['category_id' => $category->id]);
+        $low = Product::factory()->create(['category_id' => $category->id]);
 
         $top->stockMovements()->create([
             'user_id' => $this->operator->id, 'type' => 'in', 'quantity' => 200, 'reason' => 'Compra',
@@ -151,7 +151,7 @@ class ReportTest extends TestCase
     public function test_giro_excludes_movements_older_than_30_days(): void
     {
         $category = Category::factory()->create();
-        $product  = Product::factory()->create(['category_id' => $category->id]);
+        $product = Product::factory()->create(['category_id' => $category->id]);
 
         $this->travel(-31)->days();
         $product->stockMovements()->create([

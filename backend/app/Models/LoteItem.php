@@ -10,15 +10,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class LoteItem extends Model
 {
     protected $primaryKey = null;
+
     public $incrementing = false;
+
     protected $appends = ['subtotal'];
 
     protected function casts(): array
     {
         return [
             'quantidade_fardos' => 'integer',
-            'itens_por_fardo'   => 'integer',
-            'valor_unitario'    => 'decimal:2',
+            'itens_por_fardo' => 'integer',
+            'valor_unitario' => 'decimal:2',
         ];
     }
 

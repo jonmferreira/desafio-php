@@ -18,7 +18,7 @@ class StoreLoteRequest extends FormRequest
     {
         return [
             'user_id' => ['required', 'integer', 'exists:users,id'],
-            'frete'   => ['nullable', 'numeric', 'min:0', 'max:999999999.99'],
+            'frete' => ['nullable', 'numeric', 'min:0', 'max:999999999.99'],
         ];
     }
 }

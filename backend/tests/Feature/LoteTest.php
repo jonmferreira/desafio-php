@@ -23,11 +23,11 @@ class LoteTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->admin    = User::factory()->admin()->create();
+        $this->admin = User::factory()->admin()->create();
         $this->operator = User::factory()->create();
-        $this->product  = Product::factory()->create([
+        $this->product = Product::factory()->create([
             'category_id' => Category::factory()->create()->id,
-            'min_fardos'  => 5,
+            'min_fardos' => 5,
         ]);
     }
 
@@ -35,11 +35,11 @@ class LoteTest extends TestCase
     {
         $lote = Lote::factory()->create(['user_id' => $user->id]);
         LoteItem::create([
-            'lote_id'          => $lote->id,
-            'product_id'       => $this->product->id,
+            'lote_id' => $lote->id,
+            'product_id' => $this->product->id,
             'quantidade_fardos' => $fardos,
-            'itens_por_fardo'  => 12,
-            'valor_unitario'   => '25.90',
+            'itens_por_fardo' => 12,
+            'valor_unitario' => '25.90',
         ]);
 
         return $lote;
@@ -136,10 +136,10 @@ class LoteTest extends TestCase
 
         $this->actingAs($this->operator)
             ->postJson("/api/lotes/{$lote->id}/items", [
-                'product_id'       => $this->product->id,
+                'product_id' => $this->product->id,
                 'quantidade_fardos' => 10,
-                'itens_por_fardo'  => 12,
-                'valor_unitario'   => '25.90',
+                'itens_por_fardo' => 12,
+                'valor_unitario' => '25.90',
             ])
             ->assertCreated()
             ->assertJsonPath('quantidade_fardos', 10);
@@ -151,10 +151,10 @@ class LoteTest extends TestCase
 
         $response = $this->actingAs($this->operator)
             ->postJson("/api/lotes/{$lote->id}/items", [
-                'product_id'       => $this->product->id,
+                'product_id' => $this->product->id,
                 'quantidade_fardos' => 5,
-                'itens_por_fardo'  => 10,
-                'valor_unitario'   => '20.00',
+                'itens_por_fardo' => 10,
+                'valor_unitario' => '20.00',
             ])
             ->assertCreated();
 
@@ -183,7 +183,7 @@ class LoteTest extends TestCase
             ->assertNoContent();
 
         $this->assertDatabaseMissing('lote_items', [
-            'lote_id'    => $lote->id,
+            'lote_id' => $lote->id,
             'product_id' => $this->product->id,
         ]);
     }
@@ -197,7 +197,7 @@ class LoteTest extends TestCase
         $this->actingAs($this->operator)
             ->postJson("/api/lotes/{$lote->id}/avarias", [
                 'descricao' => 'Caixas amassadas',
-                'valor'     => '45.00',
+                'valor' => '45.00',
             ])
             ->assertCreated()
             ->assertJsonPath('descricao', 'Caixas amassadas');
@@ -205,7 +205,7 @@ class LoteTest extends TestCase
 
     public function test_can_remove_avaria(): void
     {
-        $lote   = Lote::factory()->create(['user_id' => $this->operator->id]);
+        $lote = Lote::factory()->create(['user_id' => $this->operator->id]);
         $avaria = $lote->avarias()->create(['descricao' => 'Avaria teste', 'valor' => '10.00']);
 
         $this->actingAs($this->operator)
@@ -223,16 +223,16 @@ class LoteTest extends TestCase
 
         $this->actingAs($this->operator)
             ->postJson('/api/saidas', [
-                'lote_id'          => $lote->id,
-                'product_id'       => $this->product->id,
+                'lote_id' => $lote->id,
+                'product_id' => $this->product->id,
                 'quantidade_fardos' => 3,
-                'motivo'           => 'Venda balcão',
+                'motivo' => 'Venda balcão',
             ])
             ->assertCreated();
 
         $this->assertDatabaseHas('lote_items', [
-            'lote_id'          => $lote->id,
-            'product_id'       => $this->product->id,
+            'lote_id' => $lote->id,
+            'product_id' => $this->product->id,
             'quantidade_fardos' => 7,
         ]);
     }
@@ -243,10 +243,10 @@ class LoteTest extends TestCase
 
         $this->actingAs($this->operator)
             ->postJson('/api/saidas', [
-                'lote_id'          => $lote->id,
-                'product_id'       => $this->product->id,
+                'lote_id' => $lote->id,
+                'product_id' => $this->product->id,
                 'quantidade_fardos' => 99,
-                'motivo'           => 'Tentativa inválida',
+                'motivo' => 'Tentativa inválida',
             ])
             ->assertUnprocessable();
     }
@@ -257,8 +257,8 @@ class LoteTest extends TestCase
 
         $this->actingAs($this->operator)
             ->postJson('/api/saidas', [
-                'lote_id'          => $lote->id,
-                'product_id'       => $this->product->id,
+                'lote_id' => $lote->id,
+                'product_id' => $this->product->id,
                 'quantidade_fardos' => 1,
             ])
             ->assertUnprocessable();
@@ -270,10 +270,10 @@ class LoteTest extends TestCase
 
         $response = $this->actingAs($this->operator)
             ->postJson('/api/saidas', [
-                'lote_id'          => $lote->id,
-                'product_id'       => $this->product->id,
+                'lote_id' => $lote->id,
+                'product_id' => $this->product->id,
                 'quantidade_fardos' => 2,
-                'motivo'           => 'Entrega',
+                'motivo' => 'Entrega',
             ])
             ->assertCreated();
 

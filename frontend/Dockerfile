@@ -2,9 +2,11 @@ FROM node:22-alpine AS base
 WORKDIR /app
 COPY package*.json ./
 
-# ---- dev: vite dev server com hot-reload ----
-FROM base AS dev
-RUN npm ci
+# ---- dev: vite dev server + Playwright E2E ----
+FROM node:22-bookworm-slim AS dev
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci && npx playwright install --with-deps chromium
 COPY . .
 EXPOSE 3000
 CMD ["npm", "run", "dev", "--", "--host"]

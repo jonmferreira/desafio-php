@@ -8,13 +8,13 @@ test.describe('Relatórios — Admin', () => {
   })
 
   test('exibe as três abas de relatório', async ({ page }) => {
-    await expect(page.getByRole('tab', { name: /Ruptura de estoque/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Estoque crítico/i })).toBeVisible()
     await expect(page.getByRole('tab', { name: /Valor por categoria/i })).toBeVisible()
     await expect(page.getByRole('tab', { name: /Giro/i })).toBeVisible()
   })
 
-  test('aba Ruptura de estoque está ativa por padrão', async ({ page }) => {
-    const tab = page.getByRole('tab', { name: /Ruptura de estoque/i })
+  test('aba Estoque crítico está ativa por padrão', async ({ page }) => {
+    const tab = page.getByRole('tab', { name: /Estoque crítico/i })
     await expect(tab).toHaveAttribute('aria-selected', 'true')
   })
 
@@ -36,6 +36,6 @@ test.describe('Relatórios — Operador', () => {
 
   test('operador também acessa relatórios', async ({ page }) => {
     await page.goto('/reports')
-    await expect(page.getByRole('tab', { name: /Ruptura de estoque/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Estoque crítico/i })).toBeVisible()
   })
 })

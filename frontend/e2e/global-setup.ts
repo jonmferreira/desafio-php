@@ -15,6 +15,15 @@ async function saveState (email: string, password: string, path: string) {
   await page.locator('button[type="submit"]').click()
   await page.waitForURL('**/dashboard')
 
+  // Pré-aquece todas as rotas para que Vite conclua a otimização
+  // de dependências antes dos testes (evita reloads que cancelam navegações)
+  await page.goto(`${BASE_URL}/products`)
+  await page.waitForLoadState('networkidle')
+  await page.goto(`${BASE_URL}/reports`)
+  await page.waitForLoadState('networkidle')
+  await page.goto(`${BASE_URL}/dashboard`)
+  await page.waitForLoadState('networkidle')
+
   await context.storageState({ path })
   await browser.close()
 }

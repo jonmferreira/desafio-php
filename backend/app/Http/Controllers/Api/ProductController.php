@@ -61,7 +61,7 @@ class ProductController extends Controller
     {
         $products = Product::query()->with('category')->get();
 
-        $escape = fn (mixed $v) => '"' . str_replace('"', '""', (string) $v) . '"';
+        $escape = fn (mixed $v) => '"'.str_replace('"', '""', (string) $v).'"';
 
         $lines = [
             implode(';', array_map($escape, ['SKU', 'Nome', 'Categoria', 'Unidade', 'Peso (kg)', 'Fardos Mínimos', 'Fardos em Estoque', 'Preço'])),
@@ -81,11 +81,11 @@ class ProductController extends Controller
             ]));
         }
 
-        $csv = "\xEF\xBB\xBF" . implode("\n", $lines);
+        $csv = "\xEF\xBB\xBF".implode("\n", $lines);
 
         return response($csv, 200, [
-            'Content-Type'        => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="produtos-' . now()->format('Y-m-d') . '.csv"',
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="produtos-'.now()->format('Y-m-d').'.csv"',
         ]);
     }
 }

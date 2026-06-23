@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Lote;
+use App\Models\LoteItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,12 +31,13 @@ class ProductTest extends TestCase
     private function productPayload(array $overrides = []): array
     {
         return array_merge([
-            'category_id'  => $this->category->id,
-            'sku'          => 'SKU-TEST-001',
-            'name'         => 'Produto Teste',
-            'unit'         => 'un',
-            'min_quantity' => 5,
-            'price'        => '29.90',
+            'category_id' => $this->category->id,
+            'sku' => 'SKU-TEST-001',
+            'name' => 'Produto Teste',
+            'unit' => 'un',
+            'peso' => '1.500',
+            'min_fardos' => 5,
+            'price' => '29.90',
         ], $overrides);
     }
 
@@ -58,7 +61,8 @@ class ProductTest extends TestCase
         $this->actingAs($this->admin)
             ->postJson('/api/products', $this->productPayload())
             ->assertCreated()
-            ->assertJsonPath('sku', 'SKU-TEST-001');
+            ->assertJsonPath('sku', 'SKU-TEST-001')
+            ->assertJsonPath('min_fardos', 5);
     }
 
     public function test_operator_cannot_create_product(): void
@@ -83,7 +87,7 @@ class ProductTest extends TestCase
         $product = Product::factory()->create(['category_id' => $this->category->id]);
 
         $this->actingAs($this->admin)
-            ->putJson("/api/products/{$product->id}", ['name' => 'Nome Atualizado'])
+            ->putJson("/api/products/{$product->id}", ['name' => 'Nome Atualizado', 'min_fardos' => 10])
             ->assertOk()
             ->assertJsonPath('name', 'Nome Atualizado');
     }
@@ -117,20 +121,27 @@ class ProductTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_filter_by_status_ruptura_returns_only_low_stock(): void
+    public function test_filter_by_status_critico_returns_only_low_stock(): void
     {
-        $low = Product::factory()->create(['category_id' => $this->category->id, 'min_quantity' => 10]);
-        $ok = Product::factory()->create(['category_id' => $this->category->id, 'min_quantity' => 1]);
+        // Produto sem fardos em lotes → estoque crítico (min_fardos=10, 0 em lotes)
+        $low = Product::factory()->create([
+            'category_id' => $this->category->id,
+            'min_fardos' => 10,
+        ]);
 
-        $ok->stockMovements()->create([
-            'user_id'  => $this->operator->id,
-            'type'     => 'in',
-            'quantity' => 50,
-            'reason'   => 'Entrada inicial',
+        // Produto com fardos suficientes em lotes → ok
+        $ok = Product::factory()->create(['category_id' => $this->category->id, 'min_fardos' => 3]);
+        $lote = Lote::factory()->create(['user_id' => $this->operator->id]);
+        LoteItem::create([
+            'lote_id' => $lote->id,
+            'product_id' => $ok->id,
+            'quantidade_fardos' => 10,
+            'itens_por_fardo' => 12,
+            'valor_unitario' => '10.00',
         ]);
 
         $response = $this->actingAs($this->operator)
-            ->getJson('/api/products?status=ruptura')
+            ->getJson('/api/products?status=critico')
             ->assertOk();
 
         $ids = collect($response->json('data'))->pluck('id');

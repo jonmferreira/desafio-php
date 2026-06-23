@@ -383,10 +383,34 @@ flowchart TD
 
 - **Postman/Newman**: a coleção em [`postman/`](./postman) cobre os fluxos principais da API
   e os vetores de segurança descritos na seção abaixo (ver `postman/README.md`).
+- **PHPUnit — Feature Tests (backend)**: 56 testes automatizados em `backend/tests/Feature/`,
+  cobrindo autenticação e autorização por perfil (admin/operador), CRUD de usuários e produtos,
+  movimentações e idempotência, lotes (criação, numeração por cliente, itens, avarias, saídas,
+  controle de fardos) e relatórios (ruptura, capital por cliente, estoque por produto, giro).
+  Rodam em SQLite in-memory (`phpunit.xml`).
+
+  ```bash
+  # Dentro do container backend:
+  php artisan test
+
+  # Ou um arquivo específico:
+  php artisan test --filter LoteTest
+  ```
+
 - **Playwright E2E (frontend)**: 34 testes automatizados em `frontend/e2e/`, cobrindo
   autenticação, dashboard, produtos, lotes (listagem, formulário, detalhe) e relatórios.
   Rodam com dois perfis de usuário pré-autenticados (`admin.json` / `operator.json`) gerados
-  no `global-setup.ts`. Executar com `npm run test:e2e` dentro do container frontend.
+  no `global-setup.ts`.
+
+  ```bash
+  # Dentro do container frontend:
+  npm run test:e2e
+  ```
+
+- **Postman/Newman**: para testar as rotas manualmente ou rodar os vetores de segurança,
+  importe a coleção e o ambiente em `postman/` no Postman (ver `postman/README.md`). Os
+  testes de race condition (API6) devem ser executados via Collection Runner com 10 iterações
+  e 0 ms de delay.
 
 ## Coleção Postman
 

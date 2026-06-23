@@ -18,7 +18,7 @@ class StoreAvariaRequest extends FormRequest
     {
         return [
             'descricao' => ['required', 'string', 'max:500'],
-            'valor'     => ['required', 'numeric', 'min:0', 'max:999999999.99'],
+            'valor' => ['required', 'numeric', 'min:0', 'max:999999999.99'],
         ];
     }
 }

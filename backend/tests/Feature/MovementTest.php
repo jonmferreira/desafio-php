@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class MovementTest extends TestCase
@@ -22,12 +23,12 @@ class MovementTest extends TestCase
         parent::setUp();
         $this->operator = User::factory()->create();
         $this->product = Product::factory()->create([
-            'category_id'  => Category::factory()->create()->id,
-            'min_quantity' => 5,
+            'category_id' => Category::factory()->create()->id,
+            'min_fardos' => 5,
         ]);
     }
 
-    private function postMovement(array $payload, string $key = 'key-default'): \Illuminate\Testing\TestResponse
+    private function postMovement(array $payload, string $key = 'key-default'): TestResponse
     {
         return $this->actingAs($this->operator)
             ->postJson(
@@ -37,21 +38,28 @@ class MovementTest extends TestCase
             );
     }
 
-    public function test_entry_increases_stock(): void
+    private function balance(): int
+    {
+        return (int) StockMovement::where('product_id', $this->product->id)
+            ->selectRaw("SUM(CASE WHEN type='in' THEN quantity ELSE -quantity END) as bal")
+            ->value('bal');
+    }
+
+    public function test_entry_creates_movement_and_increases_balance(): void
     {
         $this->postMovement(['type' => 'in', 'quantity' => 20, 'reason' => 'Compra'])
             ->assertCreated();
 
-        $this->assertEquals(20, $this->product->fresh()->quantity);
+        $this->assertEquals(20, $this->balance());
     }
 
-    public function test_exit_decreases_stock(): void
+    public function test_exit_creates_movement_and_decreases_balance(): void
     {
         $this->postMovement(['type' => 'in', 'quantity' => 30, 'reason' => 'Entrada'], 'key-in');
         $this->postMovement(['type' => 'out', 'quantity' => 10, 'reason' => 'Venda'], 'key-out')
             ->assertCreated();
 
-        $this->assertEquals(20, $this->product->fresh()->quantity);
+        $this->assertEquals(20, $this->balance());
     }
 
     public function test_exit_exceeding_balance_returns_422(): void
@@ -92,10 +100,8 @@ class MovementTest extends TestCase
 
     public function test_movement_response_includes_user(): void
     {
-        $response = $this->postMovement(
-            ['type' => 'in', 'quantity' => 10, 'reason' => 'Teste']
-        )->assertCreated();
-
-        $response->assertJsonPath('user.id', $this->operator->id);
+        $this->postMovement(['type' => 'in', 'quantity' => 10, 'reason' => 'Teste'])
+            ->assertCreated()
+            ->assertJsonPath('user.id', $this->operator->id);
     }
 }

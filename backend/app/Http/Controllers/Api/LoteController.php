@@ -38,11 +38,11 @@ class LoteController extends Controller
         $pesoTotal = $lote->itens->sum(fn ($item) => ($item->product->peso ?? 0) * $item->itens_por_fardo * $item->quantidade_fardos);
 
         return response()->json([
-            'lote'          => $lote,
-            'total_itens'   => round((float) $totalItens, 2),
+            'lote' => $lote,
+            'total_itens' => round((float) $totalItens, 2),
             'total_avarias' => round((float) $totalAvarias, 2),
-            'total'         => round((float) ($totalItens + (float) $lote->frete + $totalAvarias), 2),
-            'peso_total'    => round((float) $pesoTotal, 3),
+            'total' => round((float) ($totalItens + (float) $lote->frete + $totalAvarias), 2),
+            'peso_total' => round((float) $pesoTotal, 3),
         ]);
     }
 
@@ -64,8 +64,8 @@ class LoteController extends Controller
         $totalFardos = $lote->itens->sum('quantidade_fardos');
 
         return response()->json([
-            'lote_id'      => $lote->id,
-            'peso_total'   => round((float) $pesoTotal, 3),
+            'lote_id' => $lote->id,
+            'peso_total' => round((float) $pesoTotal, 3),
             'total_fardos' => (int) $totalFardos,
         ]);
     }

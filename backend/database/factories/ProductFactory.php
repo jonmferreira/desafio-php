@@ -24,7 +24,8 @@ class ProductFactory extends Factory
             'name' => ucfirst(fake()->words(3, true)),
             'description' => fake()->sentence(),
             'unit' => fake()->randomElement(['un', 'cx', 'kg', 'l']),
-            'min_quantity' => fake()->numberBetween(5, 20),
+            'peso' => fake()->randomFloat(3, 0.5, 20),
+            'min_fardos' => fake()->numberBetween(3, 20),
             'price' => fake()->randomFloat(2, 1, 500),
         ];
     }

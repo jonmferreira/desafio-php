@@ -20,7 +20,7 @@ class ReportController extends Controller
             ->orderBy('date')
             ->get()
             ->map(fn ($row) => [
-                'date'  => $row->date,
+                'date' => $row->date,
                 'total' => (int) $row->total,
             ]);
 
@@ -29,7 +29,7 @@ class ReportController extends Controller
 
     public function ruptura(): JsonResponse
     {
-        $rows = DB::select("
+        $rows = DB::select('
             SELECT id, sku, name, min_fardos, unit, category, total_fardos
             FROM (
                 SELECT
@@ -43,22 +43,22 @@ class ReportController extends Controller
             ) sub
             WHERE total_fardos < min_fardos
             ORDER BY total_fardos ASC
-        ");
+        ');
 
         return response()->json(array_map(fn ($r) => [
-            'id'           => $r->id,
-            'sku'          => $r->sku,
-            'name'         => $r->name,
-            'min_fardos'   => (int) $r->min_fardos,
-            'unit'         => $r->unit,
-            'category'     => $r->category,
+            'id' => $r->id,
+            'sku' => $r->sku,
+            'name' => $r->name,
+            'min_fardos' => (int) $r->min_fardos,
+            'unit' => $r->unit,
+            'category' => $r->category,
             'total_fardos' => (int) $r->total_fardos,
         ], $rows));
     }
 
     public function capitalPorCliente(): JsonResponse
     {
-        $rows = DB::select("
+        $rows = DB::select('
             SELECT
                 u.id,
                 u.name,
@@ -68,18 +68,18 @@ class ReportController extends Controller
             LEFT JOIN lote_items li ON li.lote_id = l.id
             GROUP BY u.id, u.name
             ORDER BY capital DESC
-        ");
+        ');
 
         return response()->json(array_map(fn ($r) => [
-            'id'      => $r->id,
-            'name'    => $r->name,
+            'id' => $r->id,
+            'name' => $r->name,
             'capital' => round((float) $r->capital, 2),
         ], $rows));
     }
 
     public function estoquePorProduto(): JsonResponse
     {
-        $rows = DB::select("
+        $rows = DB::select('
             SELECT
                 p.id,
                 p.sku,
@@ -91,21 +91,21 @@ class ReportController extends Controller
             LEFT JOIN lote_items li ON li.product_id = p.id
             GROUP BY p.id, p.sku, p.name, p.unit, p.min_fardos
             ORDER BY total_fardos DESC
-        ");
+        ');
 
         return response()->json(array_map(fn ($r) => [
-            'id'           => $r->id,
-            'sku'          => $r->sku,
-            'name'         => $r->name,
-            'unit'         => $r->unit,
-            'min_fardos'   => (int) $r->min_fardos,
+            'id' => $r->id,
+            'sku' => $r->sku,
+            'name' => $r->name,
+            'unit' => $r->unit,
+            'min_fardos' => (int) $r->min_fardos,
             'total_fardos' => (int) $r->total_fardos,
         ], $rows));
     }
 
     public function valorEstoque(): JsonResponse
     {
-        $rows = DB::select("
+        $rows = DB::select('
             SELECT
                 c.id,
                 c.name AS category,
@@ -125,13 +125,13 @@ class ReportController extends Controller
             ) fardos ON fardos.product_id = p.id
             GROUP BY c.id, c.name
             ORDER BY total_value DESC
-        ");
+        ');
 
         return response()->json(array_map(fn ($r) => [
-            'id'            => $r->id,
-            'category'      => $r->category,
+            'id' => $r->id,
+            'category' => $r->category,
             'product_count' => (int) $r->product_count,
-            'total_value'   => (float) $r->total_value,
+            'total_value' => (float) $r->total_value,
         ], $rows));
     }
 
@@ -139,7 +139,7 @@ class ReportController extends Controller
     {
         $cutoff = now()->subDays(30)->startOfDay()->toDateTimeString();
 
-        $rows = DB::select("
+        $rows = DB::select('
             SELECT
                 p.id, p.sku, p.name,
                 COUNT(sm.id) AS operation_count,
@@ -150,14 +150,14 @@ class ReportController extends Controller
             GROUP BY p.id, p.sku, p.name
             ORDER BY total_quantity DESC
             LIMIT 10
-        ", [$cutoff]);
+        ', [$cutoff]);
 
         return response()->json(array_map(fn ($r) => [
-            'id'              => $r->id,
-            'sku'             => $r->sku,
-            'name'            => $r->name,
+            'id' => $r->id,
+            'sku' => $r->sku,
+            'name' => $r->name,
             'operation_count' => (int) $r->operation_count,
-            'total_quantity'  => (int) $r->total_quantity,
+            'total_quantity' => (int) $r->total_quantity,
         ], $rows));
     }
 }

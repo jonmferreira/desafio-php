@@ -26,13 +26,13 @@ trait Auditable
     private static function audit(string $event, array $old, array $new, $model): void
     {
         Audit::create([
-            'user_id'        => Auth::id(),
-            'event'          => $event,
+            'user_id' => Auth::id(),
+            'event' => $event,
             'auditable_type' => get_class($model),
-            'auditable_id'   => $model->getKey(),
-            'old_values'     => $old ?: null,
-            'new_values'     => $new ?: null,
-            'ip_address'     => Request::ip(),
+            'auditable_id' => $model->getKey(),
+            'old_values' => $old ?: null,
+            'new_values' => $new ?: null,
+            'ip_address' => Request::ip(),
         ]);
     }
 }

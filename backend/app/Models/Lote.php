@@ -16,7 +16,7 @@ class Lote extends Model
     protected function casts(): array
     {
         return [
-            'frete'  => 'decimal:2',
+            'frete' => 'decimal:2',
             'numero' => 'integer',
         ];
     }

@@ -323,9 +323,10 @@ flowchart TD
 
 - **Postman/Newman**: a coleção em [`postman/`](./postman) cobre os fluxos principais da API
   e os vetores de segurança descritos na seção abaixo (ver `postman/README.md`).
-- **PHPUnit (backend)** e **Vitest (frontend)**: testes automatizados estão planejados para a
-  última fase do projeto, após a versão final do frontend, e ainda não foram escritos. A
-  cobertura atual de fluxos e segurança é garantida pela coleção Postman/Newman.
+- **Playwright E2E (frontend)**: 34 testes automatizados em `frontend/e2e/`, cobrindo
+  autenticação, dashboard, produtos, lotes (listagem, formulário, detalhe) e relatórios.
+  Rodam com dois perfis de usuário pré-autenticados (`admin.json` / `operator.json`) gerados
+  no `global-setup.ts`. Executar com `npm run test:e2e` dentro do container frontend.
 
 ## Coleção Postman
 

@@ -1,0 +1,9 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": ["e2e/**/*.ts"],
+  "compilerOptions": {
+    "composite": false,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false
+  }
+}

@@ -82,6 +82,31 @@ graph LR
     Operator --> shared
 ```
 
+### Como o filtro de perfil é aplicado
+
+**Backend — duas camadas:**
+
+1. **Middleware `admin` (`EnsureAdmin`)**: aplicado nas rotas de escrita de usuários, produtos,
+   categorias e exclusão de lotes. Qualquer token de operador que tente acessar essas rotas
+   recebe `403 Forbidden` antes de chegar ao controller.
+
+2. **`UserPolicy`**: controla acesso por objeto em `GET/PUT/DELETE /api/users/{id}`. Um
+   operador só pode consultar e editar o próprio perfil; tentar acessar o perfil de outro
+   usuário retorna `403` (mitigação de IDOR — API1).
+
+**Frontend — duas camadas:**
+
+1. **Helper `canManageUser` (`src/helpers/permissions.ts`)**: avalia `role` e `id` do usuário
+   autenticado (store `auth`) para esconder ou desabilitar botões de edição/exclusão na UI,
+   refletindo a mesma lógica da `UserPolicy`.
+
+2. **Store `auth` + condicionais nos componentes**: menus, botões e rotas como "Excluir lote"
+   e "Cadastrar produto" são renderizados condicionalmente com `v-if="isAdmin"`, onde `isAdmin`
+   é derivado do campo `role` retornado no login e persistido na store.
+
+> A restrição no frontend é visual (UX). A restrição no backend é a barreira de segurança
+> efetiva — remover um botão da UI não impede uma chamada direta à API.
+
 ## Modelo de Dados e Adaptação do Domínio
 
 O enunciado original pede `User hasMany Product` (produto pertence diretamente a um usuário).

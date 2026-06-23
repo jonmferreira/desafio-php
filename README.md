@@ -152,8 +152,7 @@ erDiagram
     products    ||--o{ stock_movements    : "afeta"
 ```
 
-> `stock_movements` é mantida apenas para alimentar o relatório de giro dos últimos 30 dias
-> (`DemoMovementsSeeder`). O controle de estoque efetivo usa a cadeia `lotes → lote_items → saidas`.
+> `stock_movements` alimenta o gráfico de giro do `DashboardView` (série temporal dos últimos 30 dias).
 
 ### Campos calculados (nunca armazenados)
 
@@ -423,8 +422,7 @@ O usuário acessa os produtos que possui via `User → Lote → LoteItem → Pro
 `GET /lotes?user_id={id}` e `GET /reports/estoque-produtos` materializam essa relação para
 consulta. As três queries em `consultas.sql` expressam o mesmo em SQL puro.
 
-### `stock_movements` preservada
+### `stock_movements`
 
-A tabela `stock_movements` foi mantida para alimentar o gráfico de giro (`DashboardView`) com
-dados de série temporal dos últimos 30 dias, populada pelo `DemoMovementsSeeder`. O controle
-de estoque efetivo (saldo, saídas, capital) usa exclusivamente `lotes → lote_items → saidas`.
+Alimenta o gráfico de giro do `DashboardView` com a série temporal dos últimos 30 dias,
+populada pelo `DemoMovementsSeeder`.
